@@ -174,6 +174,13 @@ nav.tabs::-webkit-scrollbar{display:none}
 .item.hasimg .ibody{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
 .opthero{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;margin-bottom:12px;display:block;background:var(--basil-soft)}
 .mthumb{width:44px;height:44px;border-radius:8px;object-fit:cover;flex:none;background:var(--basil-soft)}
+.ctimer{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:4px 12px;border-radius:14px;background:var(--turmeric-soft);color:var(--turmeric);font-weight:600;font-size:14px;font-variant-numeric:tabular-nums}
+.ctimer.low{background:var(--chili-soft);color:var(--chili)}
+.expired{text-align:center;padding:28px 18px}
+.expired .big{font-size:44px;line-height:1;margin-bottom:8px}
+.sr-file{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
+.imgpick{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.imgprev{width:88px;height:88px;border-radius:12px;object-fit:cover;background:var(--basil-soft);display:grid;place-items:center;font-size:30px;flex:none}
 .optlist{display:flex;flex-direction:column;gap:8px}
 .optbtn{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:12px;text-align:left;font-weight:500;min-height:52px}
 .optbtn[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);box-shadow:inset 0 0 0 1px var(--basil)}
@@ -241,12 +248,12 @@ const SEED_MENU = [
 const DEF_SAUCE={cat:"สเต็ก",title:"เลือกซอสราด",choices:["ซอสเห็ด","ซอสพริกไทยดำ","ซอสเกรวี่","ซอสไวน์แดง","ซอสไวน์องุ่น","ซอสมัสตาร์ด","ซอสเปรี้ยวมะเขือเทศ","มายองเนส @เกล็ดขนมปัง"],v2:true};
 const IMG_MAP={"สเต็กปลาดอร์ลี่": "https://img.wongnai.com/p/256x256/2022/09/18/b2331a6feb2e4137876fc3c76307bd56.jpg", "พอร์คช๊อป": "https://img.wongnai.com/p/256x256/2020/05/09/57ce379e6cd44313ac4e10b8f62d9ace.jpg", "ทูน่าสลัด": "https://img.wongnai.com/p/256x256/2020/05/09/24fac5c60df841c4960919f2f7c6b993.jpg", "สเต็กหมู": "https://img.wongnai.com/p/256x256/2020/05/09/1f109b6bb02d43379f763dba2c8daf94.jpg", "สเต็กไก่": "https://img.wongnai.com/p/256x256/2020/05/09/e11a6920bbfc4fc0a4fb0666423d1949.jpg", "สเต็กเนื้อสัน": "https://img.wongnai.com/p/256x256/2025/11/20/cb4b91705a364eba8502b71c6310b8c0.jpg", "สเต็กไก่บรั่นดีซอส": "https://img.wongnai.com/p/256x256/2020/05/09/58d6bfe5cedd4d60a6f1e083fc134def.jpg", "สเต็กหมูบรั่นดีซอส": "https://img.wongnai.com/p/256x256/2021/05/18/fe42c88534554daba095b2becbd0fe2f.jpg", "ไส้กรอกเยอรมันรวม": "https://img.wongnai.com/p/256x256/2022/09/18/2cf47145e50a41d08f901bd388112358.jpg", "ปลาดอร์ลี่ชุบเกล็ดขนมปัง": "https://img.wongnai.com/p/256x256/2020/05/17/e25f3ada5e73495eae6aa3be1dcad2dd.jpg", "หมูชุบเกล็ดขนมปัง": "https://img.wongnai.com/p/256x256/2022/03/12/cb6b26ce65664aeda3bdf41982d4e09c.jpg", "ไก่ชุบเกล็ดขนมปัง": "https://img.wongnai.com/p/256x256/2022/03/12/95665c1ef69742f2b1886110b8bf9387.jpg", "สปาเก็ตตี้คาโบนาร่า": "https://img.wongnai.com/p/256x256/2020/05/11/18a18d2c9c044c07a7a520563ca8c774.jpg", "สปาเก็ตตี้ซอสหมู": "https://img.wongnai.com/p/256x256/2021/05/18/4129c3ca539741728f18c20ecc49605b.jpg", "สปาเก็ตตี้ซอสไก่": "https://img.wongnai.com/p/256x256/2021/05/18/0bdd3b83071348038e5a174a083b2266.jpg", "สปาเก็ตตี้คาเรตเทียร่า หมู (ใส่ทูน่า)": "https://img.wongnai.com/p/256x256/2020/05/11/2b8c72deff4a4df998c28ef0030243a1.jpg", "สลัดหมู": "https://img.wongnai.com/p/256x256/2020/05/09/e1d6bee62af341fca7748d3c28603fe5.jpg", "สลัดไก่": "https://img.wongnai.com/p/256x256/2020/05/09/cc5778fcb67d4713b19a39ef28566030.jpg", "เชฟสลัด": "https://img.wongnai.com/p/256x256/2020/05/09/3378271e31d24a9aaa593c1d6083f892.jpg", "ขนมปัง ไข่ดาว แฮม ไส้กรอก": "https://img.wongnai.com/p/256x256/2021/05/18/d07a2de75bb248b680113dc346f8fcb3.jpg", "นักเก็ตไก่ 7 ชิ้น + เฟรนช์ฟรายส์": "https://img.wongnai.com/p/256x256/2021/05/18/c14aefcc413c4302a2e3ce3311634d11.jpg", "เฟรนช์ฟรายส์": "https://img.wongnai.com/p/256x256/2020/05/13/9a17322698cf497aaf55659890674b6c.jpg", "ขนมปังกระเทียม 6 ชิ้น": "https://img.wongnai.com/p/256x256/2020/05/17/c2370c739c874487a64b0c244cb3429c.jpg"};
 
-const DEF={shopName:"สเต็กน้องต๋อง",promptpay:"",service:0,vat:0,tables:10,sauce:DEF_SAUCE};
+const DEF={shopName:"สเต็กน้องต๋อง",promptpay:"",service:0,vat:0,tables:10,custMinutes:5,sauce:DEF_SAUCE};
 const VIEWS=["pos","kitchen","menu","report","setup"];
 const S={user:null,authReady:false,config:Object.assign({},DEF),menu:[],orders:[],sales:[],
   view:"pos",customer:null,table:null,cart:[],cat:null,sheet:null,form:{},reportDate:today(),sound:false,
   editId:null,arm:null,method:"cash",receipt:null,setupLoaded:false,salesUnsub:null,salesFor:null,ordersUnsub:null,ordersKey:null,firstOrders:true,
-  got:{c:false,m:false},loginErr:"",busy:false,optFor:null,optPick:null};
+  got:{c:false,m:false},loginErr:"",busy:false,optFor:null,optPick:null,custStart:Date.now()};
 const app=document.getElementById("app");
 
 /* ---------- helpers ---------- */
@@ -271,6 +278,10 @@ function calc(lines,discount){const sub=lines.reduce((s,l)=>s+l.price*l.qty,0);c
 function cartTotal(){return S.cart.reduce((s,l)=>s+l.price*l.qty,0)}
 function cartCount(){return S.cart.reduce((s,l)=>s+l.qty,0)}
 function isStaff(){return !!S.user}
+function custLimitMs(){const m=Number(S.config.custMinutes);return m>0?m*60000:0}
+function custLeft(){const L=custLimitMs();return L?L-(Date.now()-S.custStart):Infinity}
+function custExpired(){return !!S.customer&&custLeft()<=0}
+function mmss(ms){const t=Math.max(0,Math.ceil(ms/1000));return Math.floor(t/60)+":"+String(t%60).padStart(2,"0")}
 function sauceCfg(){const g=S.config.sauce||DEF_SAUCE;let ch=Array.isArray(g.choices)?g.choices:[];if(!g.v2)ch=ch.map(c=>c.trim()==="มายองเนส"?"มายองเนส @เกล็ดขนมปัง":c);return {cat:g.cat||"",title:g.title||"เลือกซอส",choices:ch}}
 function optGroupFor(m){const g=sauceCfg();if(!m||!g.choices.length||(m.cat||"อื่น ๆ")!==g.cat||m.noOpt)return null;
   const name=String(m.name||"");const ch=g.choices.map(c=>{const i=c.indexOf("@");return i<0?{label:c.trim(),kw:""}:{label:c.slice(0,i).trim(),kw:c.slice(i+1).trim()}}).filter(c=>c.label&&(!c.kw||name.includes(c.kw))).map(c=>c.label);
@@ -299,7 +310,7 @@ function readHash(){const h=(location.hash||"").slice(1).toLowerCase();
   if(h==="ta"){S.customer="TA";return}
   S.customer=null;S.view=VIEWS.includes(h)?h:"pos"}
 function go(v){S.view=v;S.table=null;S.sheet=null;try{history.replaceState(null,"","#"+v)}catch(e){}if(v==="report")subSales();if(v==="setup")S.setupLoaded=false;render();window.scrollTo(0,0)}
-window.addEventListener("hashchange",()=>{readHash();subOrders();if(S.view==="report")subSales();render()});
+window.addEventListener("hashchange",()=>{const was=S.customer;readHash();if(S.customer&&S.customer!==was)S.custStart=Date.now();subOrders();if(S.view==="report")subSales();render()});
 readHash();
 
 /* ---------- render ---------- */
@@ -380,7 +391,10 @@ function viewCustomer(){
   const t=S.customer;const valid=t==="TA"||tableIds().includes(t);
   if(!valid)return '<div class="wrap"><div class="panel empty">ไม่พบโต๊ะนี้ กรุณาแจ้งพนักงาน</div></div>';
   const total=calc(billLines(t),0).sub;
-  return '<div class="cust-hero"><p class="muted" style="margin:0">'+esc(S.config.shopName)+'</p><h1>'+tLabel(t)+'</h1><p class="muted small" style="margin:4px 0 0">เลือกเมนูแล้วกดส่งออเดอร์ อาหารจะส่งเข้าครัวทันที</p></div><main class="wrap">'+
+  const left=custLeft();const exp=left<=0;
+  const hero='<div class="cust-hero"><p class="muted" style="margin:0">'+esc(S.config.shopName)+'</p><h1>'+tLabel(t)+'</h1>'+(exp?"":'<p class="muted small" style="margin:4px 0 0">เลือกเมนูแล้วกดส่งออเดอร์ อาหารจะส่งเข้าครัวทันที</p>'+(left!==Infinity?'<span class="ctimer'+(left<60000?" low":"")+'" role="timer">⏱ เหลือเวลาสั่ง <span id="ctime">'+mmss(left)+"</span></span>":""))+"</div>";
+  if(exp)return hero+'<main class="wrap"><div class="panel expired"><div class="big">⏱</div><h2>หมดเวลาสั่งอาหาร</h2><p class="muted">ถ้าต้องการสั่งเพิ่ม กรุณาสแกน QR ที่โต๊ะอีกครั้ง</p></div>'+sentList(t,false)+(total?'<div class="panel row between"><span>ยอดรวมตอนนี้</span><span class="grand">'+baht(total)+"</span></div>":"")+"</main>";
+  return hero+'<main class="wrap">'+
    menuPicker()+sentList(t,false)+(total?'<div class="panel row between"><span>ยอดรวมตอนนี้</span><span class="grand">'+baht(total)+'</span></div><p class="muted small">ชำระเงินกับพนักงานได้เลยเมื่อทานเสร็จ</p>':"")+"</main>"}
 
 /* kitchen */
@@ -401,7 +415,11 @@ function viewMenu(){
    '<div class="field"><label for="mName">ชื่อเมนู</label><input id="mName" data-f="mName" value="'+esc(f.mName||"")+'" placeholder="เช่น สเต็กแซลมอน" autocomplete="off"></div>'+
    '<div class="grid2"><div class="field"><label for="mPrice">ราคา (บาท)</label><input id="mPrice" data-f="mPrice" type="number" inputmode="decimal" min="0" step="any" value="'+esc(f.mPrice||"")+'"></div>'+
    '<div class="field"><label for="mCat">หมวดหมู่</label><input id="mCat" data-f="mCat" list="catlist" value="'+esc(f.mCat||"")+'" placeholder="เช่น สเต็ก" autocomplete="off"><datalist id="catlist">'+cats.map(c=>'<option value="'+esc(c)+'">').join("")+"</datalist></div></div>"+
-   '<div class="field"><label for="mImg">ลิงก์รูปภาพ (ไม่ใส่ก็ได้'+(IMG_MAP[(f.mName||"").trim()]?" ตอนนี้ใช้รูปจาก LINE MAN":"")+')</label><input id="mImg" data-f="mImg" inputmode="url" autocapitalize="off" value="'+esc(f.mImg||"")+'" placeholder="https://…"></div>'+
+   (()=>{const lm=IMG_MAP[(f.mName||"").trim()];const prev=f.mImg||lm;
+     return '<div class="field"><label>รูปภาพ</label><div class="imgpick">'+(prev?'<img class="imgprev" src="'+esc(prev)+'" alt="">':'<div class="imgprev">🍽️</div>')+
+     '<div style="display:flex;flex-direction:column;gap:6px"><div class="row wrapflex"><label class="btn ghost small" for="mFile">'+(S.imgBusy?"กำลังย่อรูป…":(f.mImg?"เปลี่ยนรูป":"เลือกรูปจากเครื่อง"))+'</label>'+(f.mImg?'<button class="btn ghost small" data-a="clearImg">ลบรูป</button>':"")+'</div>'+
+     '<span class="muted small">'+(f.mImg?"ใช้รูปที่เลือกจากเครื่อง":(lm?"ตอนนี้ใช้รูปจาก LINE MAN":"ยังไม่มีรูป"))+'</span></div>'+
+     '<input id="mFile" class="sr-file" type="file" accept="image/*"></div></div>'})()+
    ((f.mCat||"").trim()===sauceCfg().cat?'<label class="check"><input type="checkbox" id="mNoOpt" data-f="mNoOpt"'+(f.mNoOpt?" checked":"")+'> ไม่ต้องให้เลือกซอส (เช่น เมนูที่มีซอสในตัวอยู่แล้ว)</label>':"")+
    '<div class="row"><button class="btn" data-a="saveMenu">'+(editing?"บันทึกการแก้ไข":"เพิ่มเมนู")+"</button>"+(editing?'<button class="btn ghost" data-a="cancelEdit">ยกเลิก</button>':"")+"</div></div>";
   if(!S.menu.length)return html+'<div style="margin-top:16px">'+importBox()+"</div>";
@@ -428,13 +446,14 @@ function viewReport(){
 
 /* setup */
 function viewSetup(){
-  if(!S.setupLoaded){const c=S.config;const g=sauceCfg();Object.assign(S.form,{oCat:g.cat||"",oTitle:g.title||"",oChoices:(g.choices||[]).join("\n"),sName:c.shopName||"",sPp:c.promptpay||"",sSvc:String(c.service||0),sVat:String(c.vat||0),sTables:String(c.tables||10)});S.setupLoaded=true}
+  if(!S.setupLoaded){const c=S.config;const g=sauceCfg();Object.assign(S.form,{oCat:g.cat||"",oTitle:g.title||"",oChoices:(g.choices||[]).join("\n"),sName:c.shopName||"",sPp:c.promptpay||"",sSvc:String(c.service||0),sVat:String(c.vat||0),sTables:String(c.tables||10),sCust:String(c.custMinutes==null?5:c.custMinutes)});S.setupLoaded=true}
   const f=S.form;const ppOk=!f.sPp||promptpay(f.sPp,1);
   let html='<div class="panel"><h2 style="font-size:19px;margin-bottom:12px">ข้อมูลร้าน</h2>'+
    '<div class="field"><label for="sName">ชื่อร้าน</label><input id="sName" data-f="sName" value="'+esc(f.sName)+'"></div>'+
    '<div class="field"><label for="sPp">พร้อมเพย์ (เบอร์มือถือ หรือเลขบัตรประชาชน/นิติบุคคล)</label><input id="sPp" data-f="sPp" inputmode="numeric" value="'+esc(f.sPp)+'" placeholder="08xxxxxxxx">'+(ppOk?"":'<span class="small" style="color:var(--chili)">ใส่เบอร์ 10 หลัก หรือเลข 13 หลัก</span>')+"</div>"+
    '<div class="grid2"><div class="field"><label for="sSvc">เซอร์วิสชาร์จ (%)</label><input id="sSvc" data-f="sSvc" type="number" min="0" step="any" value="'+esc(f.sSvc)+'"></div><div class="field"><label for="sVat">VAT บวกเพิ่ม (%)</label><input id="sVat" data-f="sVat" type="number" min="0" step="any" value="'+esc(f.sVat)+'"></div></div>'+
-   '<div class="field"><label for="sTables">จำนวนโต๊ะ</label><input id="sTables" data-f="sTables" type="number" min="1" max="60" value="'+esc(f.sTables)+'"></div>'+
+   '<div class="grid2"><div class="field"><label for="sTables">จำนวนโต๊ะ</label><input id="sTables" data-f="sTables" type="number" min="1" max="60" value="'+esc(f.sTables)+'"></div>'+
+   '<div class="field"><label for="sCust">เวลาที่ลูกค้าสั่งได้ต่อการสแกน 1 ครั้ง (นาที, ใส่ 0 = ไม่จำกัด)</label><input id="sCust" data-f="sCust" type="number" min="0" max="240" value="'+esc(f.sCust)+'"></div></div>'+
    '<h2 style="font-size:19px;margin:20px 0 12px">ตัวเลือกซอส</h2>'+
    '<div class="grid2"><div class="field"><label for="oCat">ใช้กับหมวด</label><input id="oCat" data-f="oCat" list="catlist2" value="'+esc(f.oCat)+'"><datalist id="catlist2">'+categories().map(c=>'<option value="'+esc(c)+'">').join("")+'</datalist></div>'+
    '<div class="field"><label for="oTitle">หัวข้อที่ลูกค้าเห็น</label><input id="oTitle" data-f="oTitle" value="'+esc(f.oTitle)+'"></div></div>'+
@@ -453,7 +472,7 @@ function sheetHtml(){
   const t=S.customer||S.table;
   if(S.sheet==="cart"){title="ตะกร้า "+tLabel(t);
     body=S.cart.length?S.cart.map((l,i)=>'<div class="lrow" style="flex-wrap:wrap"><div class="grow"><div>'+esc(l.name)+'</div>'+optHtml(l)+'<div class="muted small">'+baht(l.price*l.qty)+'</div></div><div class="qty"><button data-a="qty" data-i="'+i+'" data-d="-1" aria-label="ลด">−</button><span>'+l.qty+'</span><button data-a="qty" data-i="'+i+'" data-d="1" aria-label="เพิ่ม">+</button></div><input class="note-in" id="note'+i+'" data-f="note:'+i+'" maxlength="80" value="'+esc(l.note||"")+'" placeholder="หมายเหตุ เช่น สุกมาก ไม่ใส่ผัก"></div>').join(""):'<div class="empty">ตะกร้าว่าง</div>';
-    foot='<div class="row between" style="margin-bottom:10px"><span>รวม</span><span class="grand">'+baht(cartTotal())+'</span></div><button class="btn block" data-a="send"'+(S.cart.length&&!S.busy?"":" disabled")+">"+(S.customer?"ส่งออเดอร์":"ส่งเข้าครัว")+"</button>"}
+    foot=(S.customer&&custLeft()!==Infinity?'<div style="text-align:center;margin-bottom:8px"><span class="ctimer'+(custLeft()<60000?" low":"")+'">⏱ เหลือเวลาสั่ง <span id="ctime2">'+mmss(custLeft())+"</span></span></div>":"")+'<div class="row between" style="margin-bottom:10px"><span>รวม</span><span class="grand">'+baht(cartTotal())+'</span></div><button class="btn block" data-a="send"'+(S.cart.length&&!S.busy?"":" disabled")+">"+(S.customer?"ส่งออเดอร์":"ส่งเข้าครัว")+"</button>"}
   else if(S.sheet==="opt"){const m=menuById(S.optFor);const g=optGroupFor(m);if(!m||!g){S.sheet=null;return ""}
     title=m.name+" "+baht(m.price);
     body=(imgFor(m)?'<img class="opthero" src="'+esc(imgFor(m))+'" alt="" onerror="this.remove()">':"")+'<p class="muted" style="margin:0 0 10px">'+esc(g.title)+'</p><div class="optlist" role="radiogroup">'+g.choices.map(c=>'<button class="optbtn" role="radio" data-a="pick" data-v="'+esc(c)+'" aria-checked="'+(S.optPick===c)+'" aria-pressed="'+(S.optPick===c)+'">'+esc(c)+"</button>").join("")+"</div>";
@@ -502,7 +521,7 @@ document.addEventListener("click",async e=>{
   case "table":S.table=el.dataset.t;S.cart=[];S.cat=null;render();window.scrollTo(0,0);break;
   case "tables":S.table=null;S.cart=[];render();break;
   case "cat":S.cat=el.dataset.c||null;render();break;
-  case "add":{const m=menuById(el.dataset.id);if(!m||m.available===false)return;
+  case "add":{if(custExpired()){render();return}const m=menuById(el.dataset.id);if(!m||m.available===false)return;
     if(optGroupFor(m)){S.optFor=m.id;S.optPick=null;S.sheet="opt";render();return}
     const l=S.cart.find(x=>x.mid===m.id&&!x.note&&!x.opt);if(l)l.qty++;else S.cart.push({mid:m.id,name:m.name,price:Number(m.price)||0,qty:1,note:""});render();break}
   case "pick":S.optPick=el.dataset.v;render();break;
@@ -510,7 +529,8 @@ document.addEventListener("click",async e=>{
   case "qty":{const i=+el.dataset.i;S.cart[i].qty=Math.min(99,S.cart[i].qty+(+el.dataset.d));if(S.cart[i].qty<=0)S.cart.splice(i,1);if(!S.cart.length)S.sheet=null;render();break}
   case "sheet":S.sheet=el.dataset.s;if(S.sheet==="bill"){S.form.discount="";S.form.received="";S.method="cash"}render();break;
   case "close":S.sheet=null;render();break;
-  case "send":{const t=S.customer||S.table;const items=S.cart.map(l=>({mid:l.mid,name:l.name,price:l.price,qty:l.qty,note:(l.note||"").trim().slice(0,80),opt:l.opt||""}));
+  case "send":{if(custExpired()){S.sheet=null;S.cart=[];toast("หมดเวลาสั่งอาหาร กรุณาสแกน QR อีกครั้ง");render();return}
+    const t=S.customer||S.table;const items=S.cart.map(l=>({mid:l.mid,name:l.name,price:l.price,qty:l.qty,note:(l.note||"").trim().slice(0,80),opt:l.opt||""}));
     S.busy=true;render();
     await guard(async()=>{await addDoc(col("orders"),{table:t,items,status:"new",createdAt:Date.now(),source:S.customer?"customer":"staff"});S.cart=[];S.sheet=null;toast(S.customer?"ส่งออเดอร์แล้ว รออาหารสักครู่":"ส่งเข้าครัวแล้ว")},S.customer?"ส่งออเดอร์ไม่สำเร็จ กรุณาเรียกพนักงาน":null);
     S.busy=false;render();break}
@@ -535,14 +555,25 @@ document.addEventListener("click",async e=>{
     const cat=(f.mCat||"").trim()||"อื่น ๆ";
     await guard(async()=>{if(S.editId){await updateDoc(dref("menu/"+S.editId),{name,price,cat,noOpt:!!f.mNoOpt,img:(f.mImg||"").trim()});toast("บันทึกแล้ว")}else{await addDoc(col("menu"),{name,price,cat,available:true,noOpt:!!f.mNoOpt,img:(f.mImg||"").trim(),sort:Date.now()});toast("เพิ่ม "+name+" แล้ว")}S.editId=null;S.form.mName="";S.form.mPrice="";S.form.mNoOpt=false;S.form.mImg="";render()});break}
   case "edit":{const m=menuById(el.dataset.id);if(!m)return;S.editId=m.id;Object.assign(S.form,{mName:m.name,mPrice:String(m.price),mCat:m.cat||"",mNoOpt:!!m.noOpt,mImg:m.img||""});render();window.scrollTo(0,0);break}
+  case "clearImg":S.form.mImg="";render();break;
   case "cancelEdit":S.editId=null;S.form.mName="";S.form.mPrice="";S.form.mNoOpt=false;S.form.mImg="";render();break;
   case "avail":{const m=menuById(el.dataset.id);if(!m)return;await guard(()=>updateDoc(dref("menu/"+m.id),{available:m.available===false}));break}
   case "delMenu":S.arm=null;await guard(()=>deleteDoc(dref("menu/"+el.dataset.id)));toast("ลบเมนูแล้ว");break;
-  case "saveSetup":{const f=S.form;const data={shopName:(f.sName||"").trim()||"ร้านของฉัน",promptpay:(f.sPp||"").replace(/\D/g,""),service:Math.max(0,Number(f.sSvc)||0),vat:Math.max(0,Number(f.sVat)||0),tables:Math.max(1,Math.min(60,parseInt(f.sTables)||10)),
+  case "saveSetup":{const f=S.form;const data={shopName:(f.sName||"").trim()||"ร้านของฉัน",promptpay:(f.sPp||"").replace(/\D/g,""),service:Math.max(0,Number(f.sSvc)||0),vat:Math.max(0,Number(f.sVat)||0),tables:Math.max(1,Math.min(60,parseInt(f.sTables)||10)),custMinutes:Math.max(0,Math.min(240,parseInt(f.sCust)||0)),
       sauce:{cat:(f.oCat||"").trim(),title:(f.oTitle||"").trim()||"เลือกซอส",v2:true,choices:String(f.oChoices||"").split(/\n|,/).map(x=>x.trim()).filter(Boolean).slice(0,30)}};
     await guard(async()=>{await setDoc(dref("config/main"),data);toast("บันทึกการตั้งค่าแล้ว")});break}
   }
 });
+function shrinkImage(file){return new Promise((res,rej)=>{const url=URL.createObjectURL(file);const im=new Image();
+  im.onload=()=>{try{const max=360;let w=im.naturalWidth,h=im.naturalHeight;const sc=Math.min(1,max/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
+    const c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+    let q=0.75,d=c.toDataURL("image/jpeg",q);while(d.length>120000&&q>0.35){q-=0.1;d=c.toDataURL("image/jpeg",q)}
+    URL.revokeObjectURL(url);res(d)}catch(err){URL.revokeObjectURL(url);rej(err)}};
+  im.onerror=()=>{URL.revokeObjectURL(url);rej(new Error("load"))};im.src=url})}
+document.addEventListener("change",async e=>{const el=e.target;if(el.id!=="mFile"||!el.files||!el.files[0])return;
+  S.imgBusy=true;render();
+  try{S.form.mImg=await shrinkImage(el.files[0]);toast("ได้รูปแล้ว กดบันทึกเพื่อใช้รูปนี้")}catch(err){toast("เปิดรูปนี้ไม่ได้ ลองเลือกรูปอื่น")}
+  S.imgBusy=false;render()});
 document.addEventListener("input",e=>{const el=e.target;const k=el.dataset&&el.dataset.f;if(!k)return;
   if(k.startsWith("note:")){const i=+k.slice(5);if(S.cart[i])S.cart[i].note=el.value;return}
   if(k==="reportDate"){if(el.value){S.reportDate=el.value;subSales();render()}return}
@@ -580,6 +611,10 @@ onAuthStateChanged(auth,u=>{S.user=u;S.authReady=true;
   if(!u&&S.salesUnsub){S.salesUnsub();S.salesUnsub=null;S.salesFor=null;S.sales=[]}
   subOrders();if(u&&S.view==="report")subSales();render()});
 
+let wasExpired=false;
+setInterval(()=>{if(!S.customer)return;const left=custLeft();if(left===Infinity)return;
+  if(left<=0){if(!wasExpired){wasExpired=true;S.sheet=null;S.cart=[];render()}return}
+  wasExpired=false;["ctime","ctime2"].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=mmss(left);const box=el.parentNode;if(left<60000&&!box.classList.contains("low"))box.classList.add("low")}})},1000);
 setInterval(()=>{if(!S.sheet&&isStaff()&&!S.customer&&(S.view==="kitchen"||S.view==="pos")){const ae=document.activeElement;if(!ae||!/INPUT/.test(ae.tagName))render()}},30000);
 </script>
 </body>
