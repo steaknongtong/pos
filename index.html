@@ -217,6 +217,21 @@ nav.tabs::-webkit-scrollbar{display:none}
 .sumrow .nm{font-size:18px;font-weight:600}
 .sumrow .sub{color:var(--muted);font-size:14px;margin-top:2px}
 .sumrow .sub b{color:var(--basil);font-weight:600}
+.kcard .ktable{font-size:24px}
+.kcard .src{font-size:14px}
+.kcard ul.kplain li{font-size:19px;line-height:1.4}
+.kcard ul.kplain li b{min-width:34px}
+.kcard .knote{font-size:16px}
+.kcard .kopt{font-size:16px}
+ul.kticks{gap:8px}
+.kitem{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:var(--surface);font-size:19px;line-height:1.4;min-height:56px}
+.kitem b{font-family:"Mitr",system-ui,sans-serif;font-weight:500;min-width:34px}
+.kitem .kbox{flex:none;width:30px;height:30px;border-radius:8px;border:2px solid var(--muted);display:grid;place-items:center;font-size:20px;font-weight:700;margin-top:1px;color:#fff}
+.kitem.done{background:var(--basil-soft);border-color:var(--basil)}
+.kitem.done .kbox{background:var(--basil);border-color:var(--basil)}
+.kitem.done .kname{text-decoration:line-through;text-decoration-thickness:2px;color:var(--muted)}
+.kprog{font-size:16px;font-weight:600;color:var(--basil);margin:2px 0 0}
+.sdone{color:var(--basil);font-weight:600;font-size:14px}
 .optlist{display:flex;flex-direction:column;gap:8px}
 .optbtn{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:12px;text-align:left;font-weight:500;min-height:52px}
 .optbtn[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);box-shadow:inset 0 0 0 1px var(--basil)}
@@ -417,8 +432,8 @@ function menuPicker(){
 function sentList(t,staff){
   const os=ordersFor(t);if(!os.length)return "";
   const stTxt={new:"รอครัว",cooking:"กำลังทำ",served:"เสิร์ฟแล้ว"};
-  return '<h2 class="section-title">สั่งแล้ว</h2><div class="sent">'+os.map(o=>'<div class="ticket-mini"><div class="row between"><span class="muted small">'+hm(o.createdAt)+(o.source==="customer"?" ลูกค้าสั่งเอง":"")+'</span><span class="status st-'+esc(o.status)+'">'+(stTxt[o.status]||"")+"</span></div>"+
-   (o.items||[]).map(i=>"<div>"+(parseInt(i.qty)||0)+"× "+esc(lineName(o,i))+(i.opt?' <span style="color:var(--basil);font-weight:600">• '+esc(i.opt)+"</span>":"")+(i.note?' <span class="muted small">('+esc(i.note)+")</span>":"")+"</div>").join("")+
+  return '<h2 class="section-title">สั่งแล้ว</h2><div class="sent">'+os.map(o=>'<div class="ticket-mini"><div class="row between"><span class="muted small">'+hm(o.createdAt)+(o.source==="customer"?" ลูกค้าสั่งเอง":"")+'</span><span class="status st-'+esc(o.status)+'">'+(o.status==="cooking"&&servedCount(o)&&(o.items||[]).length>1?"เสิร์ฟแล้ว "+servedCount(o)+"/"+(o.items||[]).length:(stTxt[o.status]||""))+"</span></div>"+
+   (o.items||[]).map((i,idx)=>"<div>"+(parseInt(i.qty)||0)+"× "+esc(lineName(o,i))+(i.opt?' <span style="color:var(--basil);font-weight:600">• '+esc(i.opt)+"</span>":"")+(i.note?' <span class="muted small">('+esc(i.note)+")</span>":"")+(o.status!=="served"&&servedMap(o)[idx]?' <span class="sdone">✓ เสิร์ฟแล้ว</span>':"")+"</div>").join("")+
    (staff?'<div class="row" style="justify-content:flex-end;margin-top:6px">'+(S.arm==="void:"+o.id?'<button class="btn warn small" data-a="void" data-id="'+o.id+'">ยืนยันยกเลิกรายการนี้</button>':'<button class="btn ghost small" data-a="arm" data-k="void:'+o.id+'">ยกเลิก</button>')+"</div>":"")+"</div>").join("")+"</div>"}
 
 function viewTable(){
@@ -439,15 +454,22 @@ function viewCustomer(){
 
 /* kitchen */
 function lateMin(){const v=Number(S.config.lateMinutes);return v>0?v:10}
+function servedMap(o){return o.served||{}}
+function servedCount(o){const m=servedMap(o);return (o.items||[]).reduce((n,_,i)=>n+(m[i]?1:0),0)}
 function kCard(o){const age=Math.max(0,Math.floor((Date.now()-o.createdAt)/60000));const late=age>=lateMin();const isNew=o.status==="new";
-  return '<article class="kcard '+(isNew?"knew":"kcook")+(late?" late":"")+'"><div class="khead"><span class="ktable">'+tLabel(o.table)+'</span><span class="kage">'+(late?'<span class="fire" aria-hidden="true">🔥</span> ':"")+(age<1?"เพิ่งสั่ง":age+" นาที")+'</span></div><div class="src">'+short(o.id)+"  "+hm(o.createdAt)+(o.source==="customer"?"  ลูกค้าสั่งเอง":"")+"</div><ul>"+
-    (o.items||[]).map(i=>"<li><b>"+(parseInt(i.qty)||0)+"×</b><span>"+esc(lineName(o,i))+optHtml(i)+(i.note?'<span class="knote">'+esc(i.note)+"</span>":"")+"</span></li>").join("")+"</ul>"+
-    (isNew?'<button class="btn block red huge" data-a="status" data-id="'+o.id+'" data-st="cooking">เริ่มทำ</button>':'<button class="btn block green huge" data-a="status" data-id="'+o.id+'" data-st="served">เสิร์ฟแล้ว</button>')+"</article>"}
+  const items=o.items||[];const sm=servedMap(o);const done=servedCount(o);
+  const detail=i=>esc(lineName(o,i))+optHtml(i)+(i.note?'<span class="knote">'+esc(i.note)+"</span>":"");
+  const list=isNew?'<ul class="kplain">'+items.map(i=>"<li><b>"+(parseInt(i.qty)||0)+"×</b><span>"+detail(i)+"</span></li>").join("")+"</ul>":
+    '<ul class="kticks">'+items.map((i,idx)=>'<li><button class="kitem'+(sm[idx]?" done":"")+'" data-a="tick" data-id="'+o.id+'" data-i="'+idx+'" aria-pressed="'+(!!sm[idx])+'"><span class="kbox" aria-hidden="true">'+(sm[idx]?"✓":"")+'</span><b>'+(parseInt(i.qty)||0)+'×</b><span class="kname">'+detail(i)+"</span></button></li>").join("")+"</ul>"+
+    (items.length>1?'<p class="kprog">เสิร์ฟแล้ว '+done+" จาก "+items.length+" รายการ</p>":"");
+  return '<article class="kcard '+(isNew?"knew":"kcook")+(late?" late":"")+'"><div class="khead"><span class="ktable">'+tLabel(o.table)+'</span><span class="kage">'+(late?'<span class="fire" aria-hidden="true">🔥</span> ':"")+(age<1?"เพิ่งสั่ง":age+" นาที")+'</span></div><div class="src">'+short(o.id)+"  "+hm(o.createdAt)+(o.source==="customer"?"  ลูกค้าสั่งเอง":"")+"</div>"+list+
+    (isNew?'<button class="btn block red huge" data-a="status" data-id="'+o.id+'" data-st="cooking">เริ่มทำ</button>':'<button class="btn block green huge" data-a="serveAll" data-id="'+o.id+'">'+(items.length>1?"เสิร์ฟแล้วทั้งหมด":"เสิร์ฟแล้ว")+"</button>")+"</article>"}
+
 function viewKitchen(){
   const nw=S.orders.filter(o=>o.status==="new");const ck=S.orders.filter(o=>o.status==="cooking");
   const head='<div class="row between wrapflex" style="margin-bottom:14px"><h2>ครัว</h2><div class="row wrapflex"><button class="btn small" data-a="sheet" data-s="summary"'+(nw.length+ck.length?"":" disabled")+'>📋 สรุปที่ต้องทำ</button><button class="btn ghost small" data-a="sound" aria-pressed="'+S.sound+'">'+(S.sound?"🔔 เสียงเปิด":"🔕 เปิดเสียงแจ้งเตือน")+"</button></div></div>";
   const zone=(cls,icon,title,list,emptyTxt)=>'<section class="kzone '+cls+'"><h3>'+icon+" "+title+' <span class="cnt">'+list.length+"</span></h3>"+(list.length?'<div class="kgrid">'+list.map(kCard).join("")+"</div>":'<div class="zempty">'+emptyTxt+"</div>")+"</section>";
-  return head+'<div class="kzones">'+zone("znew","🆕","ออเดอร์ใหม่ ยังไม่รับ",nw,"ไม่มีออเดอร์ใหม่")+zone("zcook","👨‍🍳","กำลังทำ",ck,"ยังไม่มีออเดอร์ที่กำลังทำ")+"</div>"}
+  return head+'<div class="kzones">'+zone("znew","🆕","ออเดอร์ใหม่ ยังไม่รับ",nw,"ไม่มีออเดอร์ใหม่")+zone("zcook","👨‍🍳","กำลังทำ",ck,"ยังไม่มีออเดอร์ที่กำลังทำ").replace("</h3>",'</h3><p class="muted" style="margin:-6px 4px 12px;font-size:15px">แตะที่รายการเพื่อติ๊กว่าเสิร์ฟแล้ว ครบทุกรายการแล้วออเดอร์จะหายไปเอง</p>')+"</div>"}
 
 /* menu management */
 function viewMenu(){
@@ -522,7 +544,7 @@ function sheetHtml(){
     foot='<button class="btn block" data-a="addOpt"'+(S.optPick?"":" disabled")+">"+(S.optPick?"เพิ่มลงตะกร้า":"เลือกซอสก่อน")+"</button>"}
   else if(S.sheet==="summary"){title="สรุปรายการที่ต้องทำ";
     const act=S.orders.filter(o=>o.status==="new"||o.status==="cooking");const map=new Map();
-    act.forEach(o=>(o.items||[]).forEach(i=>{const nm=lineName(o,i);const q=parseInt(i.qty)||0;if(!q)return;let r=map.get(nm);if(!r){const m=menuById(i.mid);r={nm,q:0,qn:0,qc:0,opts:new Map(),notes:[],sort:m?(categories().indexOf(m.cat||"อื่น ๆ")*10000+(m.sort||0)):1e9};map.set(nm,r)}
+    act.forEach(o=>(o.items||[]).forEach((i,idx)=>{if(servedMap(o)[idx])return;const nm=lineName(o,i);const q=parseInt(i.qty)||0;if(!q)return;let r=map.get(nm);if(!r){const m=menuById(i.mid);r={nm,q:0,qn:0,qc:0,opts:new Map(),notes:[],sort:m?(categories().indexOf(m.cat||"อื่น ๆ")*10000+(m.sort||0)):1e9};map.set(nm,r)}
       r.q+=q;if(o.status==="new")r.qn+=q;else r.qc+=q;if(i.opt)r.opts.set(i.opt,(r.opts.get(i.opt)||0)+q);if(i.note)r.notes.push(tLabel(o.table)+": "+i.note)}));
     const rows=[...map.values()].sort((a,b)=>a.sort-b.sort);const total=rows.reduce((s,r)=>s+r.q,0);
     body=rows.length?'<p class="muted" style="margin:0 0 6px">ทั้งหมด '+total+" จาน จาก "+act.length+" ออเดอร์</p>"+rows.map(r=>'<div class="sumrow"><div class="top"><span class="nm">'+esc(r.nm)+'</span><span class="qtyb">×'+r.q+'</span></div><div class="sub">ยังไม่รับ '+r.qn+"  กำลังทำ "+r.qc+"</div>"+
@@ -576,6 +598,12 @@ document.addEventListener("click",async e=>{
   case "add":{if(custExpired()){render();return}const m=menuById(el.dataset.id);if(!m||m.available===false)return;
     if(optGroupFor(m)){S.optFor=m.id;S.optPick=null;S.sheet="opt";render();return}
     const l=S.cart.find(x=>x.mid===m.id&&!x.note&&!x.opt);if(l)l.qty++;else S.cart.push({mid:m.id,name:m.name,price:Number(m.price)||0,qty:1,note:""});render();break}
+  case "tick":{const o=S.orders.find(x=>x.id===el.dataset.id);if(!o)return;const idx=+el.dataset.i;const n=(o.items||[]).length;
+    const cur=Object.assign({},servedMap(o));cur[idx]=!cur[idx];const all=n>0&&Array.from({length:n},(_,k)=>!!cur[k]).every(Boolean);
+    o.served=cur;render();
+    await guard(async()=>{const upd={["served."+idx]:!!cur[idx]};if(all)upd.status="served";await updateDoc(dref("orders/"+o.id),upd);if(all)toast(tLabel(o.table)+" เสิร์ฟครบแล้ว")});break}
+  case "serveAll":{const o=S.orders.find(x=>x.id===el.dataset.id);if(!o)return;el.disabled=true;const all={};(o.items||[]).forEach((_,k)=>all[k]=true);
+    await guard(async()=>{await updateDoc(dref("orders/"+o.id),{served:all,status:"served"});toast(tLabel(o.table)+" เสิร์ฟครบแล้ว")});break}
   case "pick":S.optPick=el.dataset.v;render();break;
   case "addOpt":{const m=menuById(S.optFor);if(!m||!S.optPick)return;const l=S.cart.find(x=>x.mid===m.id&&x.opt===S.optPick&&!x.note);if(l)l.qty++;else S.cart.push({mid:m.id,name:m.name,price:Number(m.price)||0,qty:1,note:"",opt:S.optPick});S.sheet=null;S.optFor=null;toast("เพิ่ม "+m.name+" แล้ว");render();break}
   case "qty":{const i=+el.dataset.i;S.cart[i].qty=Math.min(99,S.cart[i].qty+(+el.dataset.d));if(S.cart[i].qty<=0)S.cart.splice(i,1);if(!S.cart.length)S.sheet=null;render();break}
