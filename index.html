@@ -168,6 +168,21 @@ nav.tabs::-webkit-scrollbar{display:none}
 .login{max-width:380px;margin:10vh auto 0}
 .login h1{font-size:26px;margin-bottom:4px}
 .err{color:var(--chili);font-size:14px;margin:0 0 10px}
+.item.hasimg{padding:0;overflow:hidden}
+.item .ithumb{aspect-ratio:4/3;background:var(--basil-soft);display:grid;place-items:center;font-size:28px;overflow:hidden}
+.item .ithumb img{width:100%;height:100%;object-fit:cover;display:block}
+.item.hasimg .ibody{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.opthero{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;margin-bottom:12px;display:block;background:var(--basil-soft)}
+.mthumb{width:44px;height:44px;border-radius:8px;object-fit:cover;flex:none;background:var(--basil-soft)}
+.optlist{display:flex;flex-direction:column;gap:8px}
+.optbtn{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:12px;text-align:left;font-weight:500;min-height:52px}
+.optbtn[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);box-shadow:inset 0 0 0 1px var(--basil)}
+.optbtn[aria-pressed="true"]::after{content:"✓";color:var(--basil);font-weight:600}
+.kopt{display:block;color:var(--basil);font-size:15px;font-weight:600}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:8px;background:var(--basil-soft);color:var(--basil);margin-left:6px;vertical-align:middle}
+.check{display:flex;align-items:center;gap:10px;margin:4px 0 14px;font-size:15px}
+.check input{width:20px;height:20px;accent-color:var(--basil)}
+.field textarea{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);width:100%;min-height:150px;font:inherit;color:inherit;line-height:1.6}
 .receipt hr{border:0;border-top:1px dashed var(--line);margin:10px 0}
 @media (max-width:520px){
   .items{grid-template-columns:1fr 1fr}
@@ -223,12 +238,15 @@ const SEED_MENU = [
  ["ซอส / เพิ่มพิเศษ","ซอสมัสตาร์ด",15],["ซอส / เพิ่มพิเศษ","ซอสไวน์แดง",15],["ซอส / เพิ่มพิเศษ","ซอสพริกไทยดำ",15],["ซอส / เพิ่มพิเศษ","มายองเนส",15],["ซอส / เพิ่มพิเศษ","ไส้กรอกเพิ่ม",15]
 ];
 
-const DEF={shopName:"สเต็กน้องต๋อง",promptpay:"",service:0,vat:0,tables:10};
+const DEF_SAUCE={cat:"สเต็ก",title:"เลือกซอสราด",choices:["ซอสเห็ด","ซอสพริกไทยดำ","ซอสเกรวี่","ซอสไวน์แดง","ซอสไวน์องุ่น","ซอสมัสตาร์ด","ซอสเปรี้ยวมะเขือเทศ","มายองเนส @เกล็ดขนมปัง"],v2:true};
+const IMG_MAP={"สเต็กปลาดอร์ลี่": "https://img.wongnai.com/p/256x256/2022/09/18/b2331a6feb2e4137876fc3c76307bd56.jpg", "พอร์คช๊อป": "https://img.wongnai.com/p/256x256/2020/05/09/57ce379e6cd44313ac4e10b8f62d9ace.jpg", "ทูน่าสลัด": "https://img.wongnai.com/p/256x256/2020/05/09/24fac5c60df841c4960919f2f7c6b993.jpg", "สเต็กหมู": "https://img.wongnai.com/p/256x256/2020/05/09/1f109b6bb02d43379f763dba2c8daf94.jpg", "สเต็กไก่": "https://img.wongnai.com/p/256x256/2020/05/09/e11a6920bbfc4fc0a4fb0666423d1949.jpg", "สเต็กเนื้อสัน": "https://img.wongnai.com/p/256x256/2025/11/20/cb4b91705a364eba8502b71c6310b8c0.jpg", "สเต็กไก่บรั่นดีซอส": "https://img.wongnai.com/p/256x256/2020/05/09/58d6bfe5cedd4d60a6f1e083fc134def.jpg", "สเต็กหมูบรั่นดีซอส": "https://img.wongnai.com/p/256x256/2021/05/18/fe42c88534554daba095b2becbd0fe2f.jpg", "ไส้กรอกเยอรมันรวม": "https://img.wongnai.com/p/256x256/2022/09/18/2cf47145e50a41d08f901bd388112358.jpg", "ปลาดอร์ลี่ชุบเกล็ดขนมปัง": "https://img.wongnai.com/p/256x256/2020/05/17/e25f3ada5e73495eae6aa3be1dcad2dd.jpg", "หมูชุบเกล็ดขนมปัง": "https://img.wongnai.com/p/256x256/2022/03/12/cb6b26ce65664aeda3bdf41982d4e09c.jpg", "ไก่ชุบเกล็ดขนมปัง": "https://img.wongnai.com/p/256x256/2022/03/12/95665c1ef69742f2b1886110b8bf9387.jpg", "สปาเก็ตตี้คาโบนาร่า": "https://img.wongnai.com/p/256x256/2020/05/11/18a18d2c9c044c07a7a520563ca8c774.jpg", "สปาเก็ตตี้ซอสหมู": "https://img.wongnai.com/p/256x256/2021/05/18/4129c3ca539741728f18c20ecc49605b.jpg", "สปาเก็ตตี้ซอสไก่": "https://img.wongnai.com/p/256x256/2021/05/18/0bdd3b83071348038e5a174a083b2266.jpg", "สปาเก็ตตี้คาเรตเทียร่า หมู (ใส่ทูน่า)": "https://img.wongnai.com/p/256x256/2020/05/11/2b8c72deff4a4df998c28ef0030243a1.jpg", "สลัดหมู": "https://img.wongnai.com/p/256x256/2020/05/09/e1d6bee62af341fca7748d3c28603fe5.jpg", "สลัดไก่": "https://img.wongnai.com/p/256x256/2020/05/09/cc5778fcb67d4713b19a39ef28566030.jpg", "เชฟสลัด": "https://img.wongnai.com/p/256x256/2020/05/09/3378271e31d24a9aaa593c1d6083f892.jpg", "ขนมปัง ไข่ดาว แฮม ไส้กรอก": "https://img.wongnai.com/p/256x256/2021/05/18/d07a2de75bb248b680113dc346f8fcb3.jpg", "นักเก็ตไก่ 7 ชิ้น + เฟรนช์ฟรายส์": "https://img.wongnai.com/p/256x256/2021/05/18/c14aefcc413c4302a2e3ce3311634d11.jpg", "เฟรนช์ฟรายส์": "https://img.wongnai.com/p/256x256/2020/05/13/9a17322698cf497aaf55659890674b6c.jpg", "ขนมปังกระเทียม 6 ชิ้น": "https://img.wongnai.com/p/256x256/2020/05/17/c2370c739c874487a64b0c244cb3429c.jpg"};
+
+const DEF={shopName:"สเต็กน้องต๋อง",promptpay:"",service:0,vat:0,tables:10,sauce:DEF_SAUCE};
 const VIEWS=["pos","kitchen","menu","report","setup"];
 const S={user:null,authReady:false,config:Object.assign({},DEF),menu:[],orders:[],sales:[],
   view:"pos",customer:null,table:null,cart:[],cat:null,sheet:null,form:{},reportDate:today(),sound:false,
   editId:null,arm:null,method:"cash",receipt:null,setupLoaded:false,salesUnsub:null,salesFor:null,ordersUnsub:null,ordersKey:null,firstOrders:true,
-  got:{c:false,m:false},loginErr:"",busy:false};
+  got:{c:false,m:false},loginErr:"",busy:false,optFor:null,optPick:null};
 const app=document.getElementById("app");
 
 /* ---------- helpers ---------- */
@@ -253,6 +271,12 @@ function calc(lines,discount){const sub=lines.reduce((s,l)=>s+l.price*l.qty,0);c
 function cartTotal(){return S.cart.reduce((s,l)=>s+l.price*l.qty,0)}
 function cartCount(){return S.cart.reduce((s,l)=>s+l.qty,0)}
 function isStaff(){return !!S.user}
+function sauceCfg(){const g=S.config.sauce||DEF_SAUCE;let ch=Array.isArray(g.choices)?g.choices:[];if(!g.v2)ch=ch.map(c=>c.trim()==="มายองเนส"?"มายองเนส @เกล็ดขนมปัง":c);return {cat:g.cat||"",title:g.title||"เลือกซอส",choices:ch}}
+function optGroupFor(m){const g=sauceCfg();if(!m||!g.choices.length||(m.cat||"อื่น ๆ")!==g.cat||m.noOpt)return null;
+  const name=String(m.name||"");const ch=g.choices.map(c=>{const i=c.indexOf("@");return i<0?{label:c.trim(),kw:""}:{label:c.slice(0,i).trim(),kw:c.slice(i+1).trim()}}).filter(c=>c.label&&(!c.kw||name.includes(c.kw))).map(c=>c.label);
+  return ch.length?{title:g.title,choices:ch}:null}
+function imgFor(m){return m&&(m.img||IMG_MAP[m.name])||""}
+function optHtml(it,cls){return it&&it.opt?'<span class="'+(cls||"kopt")+'">• '+esc(it.opt)+"</span>":""}
 
 /* PromptPay (EMVCo) */
 function crc16(s){let c=0xFFFF;for(let i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(let j=0;j<8;j++){c=(c&0x8000)?((c<<1)^0x1021):(c<<1);c&=0xFFFF}}return c.toString(16).toUpperCase().padStart(4,"0")}
@@ -334,14 +358,16 @@ function menuPicker(){
   return '<div class="chips" role="group" aria-label="หมวดหมู่"><button class="chip" data-a="cat" data-c="" aria-pressed="'+(!S.cat)+'">ทั้งหมด</button>'+
    cats.map(c=>'<button class="chip" data-a="cat" data-c="'+esc(c)+'" aria-pressed="'+(S.cat===c)+'">'+esc(c)+"</button>").join("")+"</div>"+
    '<div class="items">'+list.map(m=>{const q=S.cart.filter(l=>l.mid===m.id).reduce((s,l)=>s+l.qty,0);const off=m.available===false;
-     return '<button class="item'+(off?" off":"")+'" data-a="add" data-id="'+esc(m.id)+'"'+(off?" disabled":"")+'><span class="iname">'+esc(m.name)+'</span><span class="iprice">'+baht(m.price)+"</span>"+(q?'<span class="iqty">'+q+"</span>":"")+"</button>"}).join("")+"</div>"+
+     const im=imgFor(m);const anyImg=list.some(x=>imgFor(x));
+     const inner='<span class="iname">'+esc(m.name)+(optGroupFor(m)?'<span class="tag">เลือกซอส</span>':"")+'</span><span class="iprice">'+baht(m.price)+"</span>";
+     return '<button class="item'+(off?" off":"")+(anyImg?" hasimg":"")+'" data-a="add" data-id="'+esc(m.id)+'"'+(off?" disabled":"")+'>'+(anyImg?'<span class="ithumb">'+(im?'<img src="'+esc(im)+'" alt="" loading="lazy" onerror="this.remove()">':"🍽️")+'</span><span class="ibody">'+inner+"</span>":inner)+(q?'<span class="iqty">'+q+"</span>":"")+"</button>"}).join("")+"</div>"+
    (S.cart.length?'<div class="bar"><button class="btn" data-a="sheet" data-s="cart"><span>ตะกร้า '+cartCount()+' รายการ</span><span>'+baht(cartTotal())+"</span></button></div>":"")}
 
 function sentList(t,staff){
   const os=ordersFor(t);if(!os.length)return "";
   const stTxt={new:"รอครัว",cooking:"กำลังทำ",served:"เสิร์ฟแล้ว"};
   return '<h2 class="section-title">สั่งแล้ว</h2><div class="sent">'+os.map(o=>'<div class="ticket-mini"><div class="row between"><span class="muted small">'+hm(o.createdAt)+(o.source==="customer"?" ลูกค้าสั่งเอง":"")+'</span><span class="status st-'+esc(o.status)+'">'+(stTxt[o.status]||"")+"</span></div>"+
-   (o.items||[]).map(i=>"<div>"+(parseInt(i.qty)||0)+"× "+esc(lineName(o,i))+(i.note?' <span class="muted small">('+esc(i.note)+")</span>":"")+"</div>").join("")+
+   (o.items||[]).map(i=>"<div>"+(parseInt(i.qty)||0)+"× "+esc(lineName(o,i))+(i.opt?' <span style="color:var(--basil);font-weight:600">• '+esc(i.opt)+"</span>":"")+(i.note?' <span class="muted small">('+esc(i.note)+")</span>":"")+"</div>").join("")+
    (staff?'<div class="row" style="justify-content:flex-end;margin-top:6px">'+(S.arm==="void:"+o.id?'<button class="btn warn small" data-a="void" data-id="'+o.id+'">ยืนยันยกเลิกรายการนี้</button>':'<button class="btn ghost small" data-a="arm" data-k="void:'+o.id+'">ยกเลิก</button>')+"</div>":"")+"</div>").join("")+"</div>"}
 
 function viewTable(){
@@ -364,7 +390,7 @@ function viewKitchen(){
   if(!list.length)return head+'<div class="panel empty">ไม่มีออเดอร์ค้าง ออเดอร์ใหม่จะขึ้นที่นี่ทันที</div>';
   return head+'<div class="kgrid">'+list.map(o=>{const age=Math.max(0,Math.floor((Date.now()-o.createdAt)/60000));
    return '<article class="kcard'+(o.status==="cooking"?" cooking":"")+'"><div class="khead"><span class="ktable">'+tLabel(o.table)+'</span><span class="kage'+(age>=15?" late":"")+'">'+(age<1?"เพิ่งสั่ง":age+" นาที")+'</span></div><div class="src">'+short(o.id)+"  "+hm(o.createdAt)+(o.source==="customer"?"  ลูกค้าสั่งเอง":"")+"</div><ul>"+
-    (o.items||[]).map(i=>"<li><b>"+(parseInt(i.qty)||0)+"×</b><span>"+esc(lineName(o,i))+(i.note?'<span class="knote">'+esc(i.note)+"</span>":"")+"</span></li>").join("")+"</ul>"+
+    (o.items||[]).map(i=>"<li><b>"+(parseInt(i.qty)||0)+"×</b><span>"+esc(lineName(o,i))+optHtml(i)+(i.note?'<span class="knote">'+esc(i.note)+"</span>":"")+"</span></li>").join("")+"</ul>"+
     (o.status==="new"?'<button class="btn block" data-a="status" data-id="'+o.id+'" data-st="cooking">เริ่มทำ</button>':'<button class="btn block" data-a="status" data-id="'+o.id+'" data-st="served">เสิร์ฟแล้ว</button>')+"</article>"}).join("")+"</div>"}
 
 /* menu management */
@@ -375,10 +401,12 @@ function viewMenu(){
    '<div class="field"><label for="mName">ชื่อเมนู</label><input id="mName" data-f="mName" value="'+esc(f.mName||"")+'" placeholder="เช่น สเต็กแซลมอน" autocomplete="off"></div>'+
    '<div class="grid2"><div class="field"><label for="mPrice">ราคา (บาท)</label><input id="mPrice" data-f="mPrice" type="number" inputmode="decimal" min="0" step="any" value="'+esc(f.mPrice||"")+'"></div>'+
    '<div class="field"><label for="mCat">หมวดหมู่</label><input id="mCat" data-f="mCat" list="catlist" value="'+esc(f.mCat||"")+'" placeholder="เช่น สเต็ก" autocomplete="off"><datalist id="catlist">'+cats.map(c=>'<option value="'+esc(c)+'">').join("")+"</datalist></div></div>"+
+   '<div class="field"><label for="mImg">ลิงก์รูปภาพ (ไม่ใส่ก็ได้'+(IMG_MAP[(f.mName||"").trim()]?" ตอนนี้ใช้รูปจาก LINE MAN":"")+')</label><input id="mImg" data-f="mImg" inputmode="url" autocapitalize="off" value="'+esc(f.mImg||"")+'" placeholder="https://…"></div>'+
+   ((f.mCat||"").trim()===sauceCfg().cat?'<label class="check"><input type="checkbox" id="mNoOpt" data-f="mNoOpt"'+(f.mNoOpt?" checked":"")+'> ไม่ต้องให้เลือกซอส (เช่น เมนูที่มีซอสในตัวอยู่แล้ว)</label>':"")+
    '<div class="row"><button class="btn" data-a="saveMenu">'+(editing?"บันทึกการแก้ไข":"เพิ่มเมนู")+"</button>"+(editing?'<button class="btn ghost" data-a="cancelEdit">ยกเลิก</button>':"")+"</div></div>";
   if(!S.menu.length)return html+'<div style="margin-top:16px">'+importBox()+"</div>";
   cats.forEach(c=>{html+='<h2 class="section-title">'+esc(c)+'</h2><div class="panel list" style="padding:0 16px">'+S.menu.filter(m=>(m.cat||"อื่น ๆ")===c).map(m=>{const on=m.available!==false;
-   return '<div class="lrow"><div class="grow"><div>'+esc(m.name)+'</div><div class="muted small">'+baht(m.price)+'</div></div><button class="toggle '+(on?"on":"off")+'" data-a="avail" data-id="'+m.id+'">'+(on?"มีขาย":"หมด")+'</button><button class="btn ghost small" data-a="edit" data-id="'+m.id+'">แก้ไข</button>'+
+   return '<div class="lrow">'+(imgFor(m)?'<img class="mthumb" src="'+esc(imgFor(m))+'" alt="" loading="lazy" onerror="this.remove()">':"")+'<div class="grow"><div>'+esc(m.name)+(optGroupFor(m)?'<span class="tag">เลือกซอส</span>':"")+'</div><div class="muted small">'+baht(m.price)+'</div></div><button class="toggle '+(on?"on":"off")+'" data-a="avail" data-id="'+m.id+'">'+(on?"มีขาย":"หมด")+'</button><button class="btn ghost small" data-a="edit" data-id="'+m.id+'">แก้ไข</button>'+
     (S.arm==="del:"+m.id?'<button class="btn warn small" data-a="delMenu" data-id="'+m.id+'">ยืนยันลบ</button>':'<button class="btn ghost small" data-a="arm" data-k="del:'+m.id+'">ลบ</button>')+"</div>"}).join("")+"</div>"});
   return html}
 
@@ -400,13 +428,17 @@ function viewReport(){
 
 /* setup */
 function viewSetup(){
-  if(!S.setupLoaded){const c=S.config;Object.assign(S.form,{sName:c.shopName||"",sPp:c.promptpay||"",sSvc:String(c.service||0),sVat:String(c.vat||0),sTables:String(c.tables||10)});S.setupLoaded=true}
+  if(!S.setupLoaded){const c=S.config;const g=sauceCfg();Object.assign(S.form,{oCat:g.cat||"",oTitle:g.title||"",oChoices:(g.choices||[]).join("\n"),sName:c.shopName||"",sPp:c.promptpay||"",sSvc:String(c.service||0),sVat:String(c.vat||0),sTables:String(c.tables||10)});S.setupLoaded=true}
   const f=S.form;const ppOk=!f.sPp||promptpay(f.sPp,1);
   let html='<div class="panel"><h2 style="font-size:19px;margin-bottom:12px">ข้อมูลร้าน</h2>'+
    '<div class="field"><label for="sName">ชื่อร้าน</label><input id="sName" data-f="sName" value="'+esc(f.sName)+'"></div>'+
    '<div class="field"><label for="sPp">พร้อมเพย์ (เบอร์มือถือ หรือเลขบัตรประชาชน/นิติบุคคล)</label><input id="sPp" data-f="sPp" inputmode="numeric" value="'+esc(f.sPp)+'" placeholder="08xxxxxxxx">'+(ppOk?"":'<span class="small" style="color:var(--chili)">ใส่เบอร์ 10 หลัก หรือเลข 13 หลัก</span>')+"</div>"+
    '<div class="grid2"><div class="field"><label for="sSvc">เซอร์วิสชาร์จ (%)</label><input id="sSvc" data-f="sSvc" type="number" min="0" step="any" value="'+esc(f.sSvc)+'"></div><div class="field"><label for="sVat">VAT บวกเพิ่ม (%)</label><input id="sVat" data-f="sVat" type="number" min="0" step="any" value="'+esc(f.sVat)+'"></div></div>'+
    '<div class="field"><label for="sTables">จำนวนโต๊ะ</label><input id="sTables" data-f="sTables" type="number" min="1" max="60" value="'+esc(f.sTables)+'"></div>'+
+   '<h2 style="font-size:19px;margin:20px 0 12px">ตัวเลือกซอส</h2>'+
+   '<div class="grid2"><div class="field"><label for="oCat">ใช้กับหมวด</label><input id="oCat" data-f="oCat" list="catlist2" value="'+esc(f.oCat)+'"><datalist id="catlist2">'+categories().map(c=>'<option value="'+esc(c)+'">').join("")+'</datalist></div>'+
+   '<div class="field"><label for="oTitle">หัวข้อที่ลูกค้าเห็น</label><input id="oTitle" data-f="oTitle" value="'+esc(f.oTitle)+'"></div></div>'+
+   '<div class="field"><label for="oChoices">ซอสที่เลือกได้ บรรทัดละ 1 อย่าง ถ้าจะให้ซอสไหนขึ้นเฉพาะบางเมนู ให้ต่อท้ายด้วย @ตามด้วยคำในชื่อเมนู เช่น มายองเนส @เกล็ดขนมปัง</label><textarea id="oChoices" data-f="oChoices">'+esc(f.oChoices)+'</textarea></div>'+
    '<button class="btn" data-a="saveSetup"'+(ppOk?"":" disabled")+">บันทึกการตั้งค่า</button></div>";
   html+='<div class="row between wrapflex"><h2 class="section-title">QR สั่งอาหารประจำโต๊ะ</h2><div class="row"><button class="btn ghost small" data-a="printQr">พิมพ์</button><button class="btn ghost small" data-a="dlQr">ดาวน์โหลด</button></div></div>';
   html+='<p class="muted small" style="margin-top:0">ลูกค้าสแกนแล้วสั่งได้ทันทีโดยไม่ต้องล็อกอิน</p>';
@@ -420,8 +452,12 @@ function sheetHtml(){
   let title="",body="",foot="";
   const t=S.customer||S.table;
   if(S.sheet==="cart"){title="ตะกร้า "+tLabel(t);
-    body=S.cart.length?S.cart.map((l,i)=>'<div class="lrow" style="flex-wrap:wrap"><div class="grow"><div>'+esc(l.name)+'</div><div class="muted small">'+baht(l.price*l.qty)+'</div></div><div class="qty"><button data-a="qty" data-i="'+i+'" data-d="-1" aria-label="ลด">−</button><span>'+l.qty+'</span><button data-a="qty" data-i="'+i+'" data-d="1" aria-label="เพิ่ม">+</button></div><input class="note-in" id="note'+i+'" data-f="note:'+i+'" maxlength="80" value="'+esc(l.note||"")+'" placeholder="หมายเหตุ เช่น สุกมาก ไม่ใส่ผัก"></div>').join(""):'<div class="empty">ตะกร้าว่าง</div>';
+    body=S.cart.length?S.cart.map((l,i)=>'<div class="lrow" style="flex-wrap:wrap"><div class="grow"><div>'+esc(l.name)+'</div>'+optHtml(l)+'<div class="muted small">'+baht(l.price*l.qty)+'</div></div><div class="qty"><button data-a="qty" data-i="'+i+'" data-d="-1" aria-label="ลด">−</button><span>'+l.qty+'</span><button data-a="qty" data-i="'+i+'" data-d="1" aria-label="เพิ่ม">+</button></div><input class="note-in" id="note'+i+'" data-f="note:'+i+'" maxlength="80" value="'+esc(l.note||"")+'" placeholder="หมายเหตุ เช่น สุกมาก ไม่ใส่ผัก"></div>').join(""):'<div class="empty">ตะกร้าว่าง</div>';
     foot='<div class="row between" style="margin-bottom:10px"><span>รวม</span><span class="grand">'+baht(cartTotal())+'</span></div><button class="btn block" data-a="send"'+(S.cart.length&&!S.busy?"":" disabled")+">"+(S.customer?"ส่งออเดอร์":"ส่งเข้าครัว")+"</button>"}
+  else if(S.sheet==="opt"){const m=menuById(S.optFor);const g=optGroupFor(m);if(!m||!g){S.sheet=null;return ""}
+    title=m.name+" "+baht(m.price);
+    body=(imgFor(m)?'<img class="opthero" src="'+esc(imgFor(m))+'" alt="" onerror="this.remove()">':"")+'<p class="muted" style="margin:0 0 10px">'+esc(g.title)+'</p><div class="optlist" role="radiogroup">'+g.choices.map(c=>'<button class="optbtn" role="radio" data-a="pick" data-v="'+esc(c)+'" aria-checked="'+(S.optPick===c)+'" aria-pressed="'+(S.optPick===c)+'">'+esc(c)+"</button>").join("")+"</div>";
+    foot='<button class="btn block" data-a="addOpt"'+(S.optPick?"":" disabled")+">"+(S.optPick?"เพิ่มลงตะกร้า":"เลือกซอสก่อน")+"</button>"}
   else if(S.sheet==="bill"){title="เช็คบิล "+tLabel(t);
     const lines=billLines(t);const c=calc(lines,S.form.discount);
     const recv=Number(S.form.received)||0;
@@ -466,11 +502,15 @@ document.addEventListener("click",async e=>{
   case "table":S.table=el.dataset.t;S.cart=[];S.cat=null;render();window.scrollTo(0,0);break;
   case "tables":S.table=null;S.cart=[];render();break;
   case "cat":S.cat=el.dataset.c||null;render();break;
-  case "add":{const m=menuById(el.dataset.id);if(!m||m.available===false)return;const l=S.cart.find(x=>x.mid===m.id&&!x.note);if(l)l.qty++;else S.cart.push({mid:m.id,name:m.name,price:Number(m.price)||0,qty:1,note:""});render();break}
+  case "add":{const m=menuById(el.dataset.id);if(!m||m.available===false)return;
+    if(optGroupFor(m)){S.optFor=m.id;S.optPick=null;S.sheet="opt";render();return}
+    const l=S.cart.find(x=>x.mid===m.id&&!x.note&&!x.opt);if(l)l.qty++;else S.cart.push({mid:m.id,name:m.name,price:Number(m.price)||0,qty:1,note:""});render();break}
+  case "pick":S.optPick=el.dataset.v;render();break;
+  case "addOpt":{const m=menuById(S.optFor);if(!m||!S.optPick)return;const l=S.cart.find(x=>x.mid===m.id&&x.opt===S.optPick&&!x.note);if(l)l.qty++;else S.cart.push({mid:m.id,name:m.name,price:Number(m.price)||0,qty:1,note:"",opt:S.optPick});S.sheet=null;S.optFor=null;toast("เพิ่ม "+m.name+" แล้ว");render();break}
   case "qty":{const i=+el.dataset.i;S.cart[i].qty=Math.min(99,S.cart[i].qty+(+el.dataset.d));if(S.cart[i].qty<=0)S.cart.splice(i,1);if(!S.cart.length)S.sheet=null;render();break}
   case "sheet":S.sheet=el.dataset.s;if(S.sheet==="bill"){S.form.discount="";S.form.received="";S.method="cash"}render();break;
   case "close":S.sheet=null;render();break;
-  case "send":{const t=S.customer||S.table;const items=S.cart.map(l=>({mid:l.mid,name:l.name,price:l.price,qty:l.qty,note:(l.note||"").trim().slice(0,80)}));
+  case "send":{const t=S.customer||S.table;const items=S.cart.map(l=>({mid:l.mid,name:l.name,price:l.price,qty:l.qty,note:(l.note||"").trim().slice(0,80),opt:l.opt||""}));
     S.busy=true;render();
     await guard(async()=>{await addDoc(col("orders"),{table:t,items,status:"new",createdAt:Date.now(),source:S.customer?"customer":"staff"});S.cart=[];S.sheet=null;toast(S.customer?"ส่งออเดอร์แล้ว รออาหารสักครู่":"ส่งเข้าครัวแล้ว")},S.customer?"ส่งออเดอร์ไม่สำเร็จ กรุณาเรียกพนักงาน":null);
     S.busy=false;render();break}
@@ -493,20 +533,22 @@ document.addEventListener("click",async e=>{
   case "saveMenu":{const f=S.form;const name=(f.mName||"").trim();const price=Number(f.mPrice);
     if(!name){toast("ใส่ชื่อเมนูก่อน");return}if(f.mPrice===""||f.mPrice==null||!(price>=0)){toast("ใส่ราคาเป็นตัวเลข");return}
     const cat=(f.mCat||"").trim()||"อื่น ๆ";
-    await guard(async()=>{if(S.editId){await updateDoc(dref("menu/"+S.editId),{name,price,cat});toast("บันทึกแล้ว")}else{await addDoc(col("menu"),{name,price,cat,available:true,sort:Date.now()});toast("เพิ่ม "+name+" แล้ว")}S.editId=null;S.form.mName="";S.form.mPrice="";render()});break}
-  case "edit":{const m=menuById(el.dataset.id);if(!m)return;S.editId=m.id;Object.assign(S.form,{mName:m.name,mPrice:String(m.price),mCat:m.cat||""});render();window.scrollTo(0,0);break}
-  case "cancelEdit":S.editId=null;S.form.mName="";S.form.mPrice="";render();break;
+    await guard(async()=>{if(S.editId){await updateDoc(dref("menu/"+S.editId),{name,price,cat,noOpt:!!f.mNoOpt,img:(f.mImg||"").trim()});toast("บันทึกแล้ว")}else{await addDoc(col("menu"),{name,price,cat,available:true,noOpt:!!f.mNoOpt,img:(f.mImg||"").trim(),sort:Date.now()});toast("เพิ่ม "+name+" แล้ว")}S.editId=null;S.form.mName="";S.form.mPrice="";S.form.mNoOpt=false;S.form.mImg="";render()});break}
+  case "edit":{const m=menuById(el.dataset.id);if(!m)return;S.editId=m.id;Object.assign(S.form,{mName:m.name,mPrice:String(m.price),mCat:m.cat||"",mNoOpt:!!m.noOpt,mImg:m.img||""});render();window.scrollTo(0,0);break}
+  case "cancelEdit":S.editId=null;S.form.mName="";S.form.mPrice="";S.form.mNoOpt=false;S.form.mImg="";render();break;
   case "avail":{const m=menuById(el.dataset.id);if(!m)return;await guard(()=>updateDoc(dref("menu/"+m.id),{available:m.available===false}));break}
   case "delMenu":S.arm=null;await guard(()=>deleteDoc(dref("menu/"+el.dataset.id)));toast("ลบเมนูแล้ว");break;
-  case "saveSetup":{const f=S.form;const data={shopName:(f.sName||"").trim()||"ร้านของฉัน",promptpay:(f.sPp||"").replace(/\D/g,""),service:Math.max(0,Number(f.sSvc)||0),vat:Math.max(0,Number(f.sVat)||0),tables:Math.max(1,Math.min(60,parseInt(f.sTables)||10))};
+  case "saveSetup":{const f=S.form;const data={shopName:(f.sName||"").trim()||"ร้านของฉัน",promptpay:(f.sPp||"").replace(/\D/g,""),service:Math.max(0,Number(f.sSvc)||0),vat:Math.max(0,Number(f.sVat)||0),tables:Math.max(1,Math.min(60,parseInt(f.sTables)||10)),
+      sauce:{cat:(f.oCat||"").trim(),title:(f.oTitle||"").trim()||"เลือกซอส",v2:true,choices:String(f.oChoices||"").split(/\n|,/).map(x=>x.trim()).filter(Boolean).slice(0,30)}};
     await guard(async()=>{await setDoc(dref("config/main"),data);toast("บันทึกการตั้งค่าแล้ว")});break}
   }
 });
 document.addEventListener("input",e=>{const el=e.target;const k=el.dataset&&el.dataset.f;if(!k)return;
   if(k.startsWith("note:")){const i=+k.slice(5);if(S.cart[i])S.cart[i].note=el.value;return}
   if(k==="reportDate"){if(el.value){S.reportDate=el.value;subSales();render()}return}
+  if(el.type==="checkbox"){S.form[k]=el.checked;return}
   S.form[k]=el.value;
-  if(k==="discount"||k==="received"||k==="sPp")render()});
+  if(k==="discount"||k==="received"||k==="sPp"||k==="mCat")render()});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target&&(e.target.id==="lPw"||e.target.id==="lEmail")){const b=document.querySelector('[data-a="login"]');if(b)b.click()}});
 
 function downloadFile(name,data,type){const blob=new Blob([data],{type});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000)}
