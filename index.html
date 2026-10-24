@@ -232,6 +232,39 @@ ul.kticks{gap:8px}
 .kitem.done .kname{text-decoration:line-through;text-decoration-thickness:2px;color:var(--muted)}
 .kprog{font-size:16px;font-weight:600;color:var(--basil);margin:2px 0 0}
 .sdone{color:var(--basil);font-weight:600;font-size:14px}
+.irow{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-top:1px dashed var(--line)}
+.irow:first-of-type{border-top:0}
+.irow .itext{flex:1;min-width:0;line-height:1.45}
+.iacts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.iacts .btn{min-height:36px;padding:4px 10px;font-size:14px}
+.tarow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-bottom:10px}
+.tarow .grow{flex:1;min-width:0}
+.tarow .nm{font-weight:600;font-size:18px}
+.mnav{display:flex;align-items:center;gap:8px}
+.mnav .btn{min-width:44px;font-size:20px;padding:6px 12px}
+.mnav h2{min-width:170px;text-align:center}
+.dayrow{display:grid;grid-template-columns:96px 1fr auto;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 4px;border-bottom:1px solid var(--line);font-size:16px}
+.dayrow:last-child{border-bottom:0}
+.dayrow .dbar{height:12px;border-radius:6px;background:var(--basil);min-width:2px}
+.dayrow.zero{color:var(--muted)}
+.dayrow.zero .dbar{background:var(--line)}
+.dayrow .damt{font-weight:600;text-align:right;white-space:nowrap}
+.dayrow .damt small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+.billrow{border-bottom:1px solid var(--line)}
+.billrow:last-child{border-bottom:0}
+.billhead{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 2px;font-size:16px}
+.billhead .chev{color:var(--muted);transition:transform .15s}
+.billrow.open .chev{transform:rotate(90deg)}
+.billbody{padding:4px 4px 14px 26px;font-size:15px}
+.billbody .row{justify-content:space-between}
+.billbody hr{border:0;border-top:1px dashed var(--line);margin:8px 0}
+.dinechoice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.dinebtn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 10px;border:2px solid var(--line);border-radius:14px;background:var(--surface);font-weight:600;font-size:17px;min-height:88px;justify-content:center}
+.dinebtn .ic{font-size:28px;line-height:1}
+.dinebtn[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);box-shadow:inset 0 0 0 1px var(--basil)}
+.rvrow{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:16px}
+.rvrow:last-child{border-bottom:0}
+.fromt{font-size:13px;color:var(--muted);font-weight:400}
 .optlist{display:flex;flex-direction:column;gap:8px}
 .optbtn{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:12px;text-align:left;font-weight:500;min-height:52px}
 .optbtn[aria-pressed="true"]{border-color:var(--basil);background:var(--basil-soft);box-shadow:inset 0 0 0 1px var(--basil)}
@@ -296,6 +329,9 @@ const SEED_MENU = [
  ["ซอส / เพิ่มพิเศษ","ซอสมัสตาร์ด",15],["ซอส / เพิ่มพิเศษ","ซอสไวน์แดง",15],["ซอส / เพิ่มพิเศษ","ซอสพริกไทยดำ",15],["ซอส / เพิ่มพิเศษ","มายองเนส",15],["ซอส / เพิ่มพิเศษ","ไส้กรอกเพิ่ม",15]
 ];
 
+function ssGet(k,d){try{const v=sessionStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function ssSet(k,v){try{sessionStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+const DRINKS=[["d01","โค้ก",13],["d02","แฟนต้าน้ำเขียว",13],["d03","แฟนต้าน้ำแดง",13],["d04","แฟนต้าน้ำส้ม",13],["d05","สไปรท์",13],["d06","น้ำเปล่า",10],["d07","น้ำแข็ง 1 แก้ว",2]];
 const DEF_SAUCE={cat:"สเต็ก",title:"เลือกซอสราด",choices:["ซอสเห็ด","ซอสพริกไทยดำ","ซอสเกรวี่","ซอสไวน์แดง","ซอสไวน์องุ่น","ซอสมัสตาร์ด","ซอสเปรี้ยวมะเขือเทศ","มายองเนส @เกล็ดขนมปัง"],v2:true};
 const IMG_MAP={"สเต็กปลาดอร์ลี่": "https://img.wongnai.com/p/256x256/2022/09/18/b2331a6feb2e4137876fc3c76307bd56.jpg", "พอร์คช๊อป": "https://img.wongnai.com/p/256x256/2020/05/09/57ce379e6cd44313ac4e10b8f62d9ace.jpg", "ทูน่าสลัด": "https://img.wongnai.com/p/256x256/2020/05/09/24fac5c60df841c4960919f2f7c6b993.jpg", "สเต็กหมู": "https://img.wongnai.com/p/256x256/2020/05/09/1f109b6bb02d43379f763dba2c8daf94.jpg", "สเต็กไก่": "https://img.wongnai.com/p/256x256/2020/05/09/e11a6920bbfc4fc0a4fb0666423d1949.jpg", "สเต็กเนื้อสัน": "https://img.wongnai.com/p/256x256/2025/11/20/cb4b91705a364eba8502b71c6310b8c0.jpg", "สเต็กไก่บรั่นดีซอส": "https://img.wongnai.com/p/256x256/2020/05/09/58d6bfe5cedd4d60a6f1e083fc134def.jpg", "สเต็กหมูบรั่นดีซอส": "https://img.wongnai.com/p/256x256/2021/05/18/fe42c88534554daba095b2becbd0fe2f.jpg", "ไส้กรอกเยอรมันรวม": "https://img.wongnai.com/p/256x256/2022/09/18/2cf47145e50a41d08f901bd388112358.jpg", "ปลาดอร์ลี่ชุบเกล็ดขนมปัง": "https://img.wongnai.com/p/256x256/2020/05/17/e25f3ada5e73495eae6aa3be1dcad2dd.jpg", "หมูชุบเกล็ดขนมปัง": "https://img.wongnai.com/p/256x256/2022/03/12/cb6b26ce65664aeda3bdf41982d4e09c.jpg", "ไก่ชุบเกล็ดขนมปัง": "https://img.wongnai.com/p/256x256/2022/03/12/95665c1ef69742f2b1886110b8bf9387.jpg", "สปาเก็ตตี้คาโบนาร่า": "https://img.wongnai.com/p/256x256/2020/05/11/18a18d2c9c044c07a7a520563ca8c774.jpg", "สปาเก็ตตี้ซอสหมู": "https://img.wongnai.com/p/256x256/2021/05/18/4129c3ca539741728f18c20ecc49605b.jpg", "สปาเก็ตตี้ซอสไก่": "https://img.wongnai.com/p/256x256/2021/05/18/0bdd3b83071348038e5a174a083b2266.jpg", "สปาเก็ตตี้คาเรตเทียร่า หมู (ใส่ทูน่า)": "https://img.wongnai.com/p/256x256/2020/05/11/2b8c72deff4a4df998c28ef0030243a1.jpg", "สลัดหมู": "https://img.wongnai.com/p/256x256/2020/05/09/e1d6bee62af341fca7748d3c28603fe5.jpg", "สลัดไก่": "https://img.wongnai.com/p/256x256/2020/05/09/cc5778fcb67d4713b19a39ef28566030.jpg", "เชฟสลัด": "https://img.wongnai.com/p/256x256/2020/05/09/3378271e31d24a9aaa593c1d6083f892.jpg", "ขนมปัง ไข่ดาว แฮม ไส้กรอก": "https://img.wongnai.com/p/256x256/2021/05/18/d07a2de75bb248b680113dc346f8fcb3.jpg", "นักเก็ตไก่ 7 ชิ้น + เฟรนช์ฟรายส์": "https://img.wongnai.com/p/256x256/2021/05/18/c14aefcc413c4302a2e3ce3311634d11.jpg", "เฟรนช์ฟรายส์": "https://img.wongnai.com/p/256x256/2020/05/13/9a17322698cf497aaf55659890674b6c.jpg", "ขนมปังกระเทียม 6 ชิ้น": "https://img.wongnai.com/p/256x256/2020/05/17/c2370c739c874487a64b0c244cb3429c.jpg"};
 
@@ -304,7 +340,8 @@ const VIEWS=["pos","kitchen","menu","report","setup"];
 const S={user:null,authReady:false,config:Object.assign({},DEF),menu:[],orders:[],sales:[],
   view:"pos",customer:null,table:null,cart:[],cat:null,sheet:null,form:{},reportDate:today(),sound:false,
   editId:null,arm:null,method:"cash",receipt:null,setupLoaded:false,salesUnsub:null,salesFor:null,ordersUnsub:null,ordersKey:null,firstOrders:true,
-  got:{c:false,m:false},loginErr:"",busy:false,optFor:null,optPick:null,custStart:Date.now()};
+  got:{c:false,m:false},loginErr:"",busy:false,optFor:null,optPick:null,custStart:Date.now(),
+  ta:null,taCust:ssGet("taCust",null),myTA:ssGet("myTA",[]),contacts:{},contactsUnsub:null,reportMonth:today().slice(0,7),dayDate:null,openBills:{},optEdit:null,drinksTried:false,dine:null};
 const app=document.getElementById("app");
 
 /* ---------- helpers ---------- */
@@ -315,7 +352,13 @@ function baht(n){n=Math.round((Number(n)||0)*100)/100;return "฿"+n.toLocaleStr
 function hm(ms){return new Date(ms).toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"})}
 function tableIds(){const n=Math.max(1,Math.min(60,parseInt(S.config.tables)||10));const a=[];for(let i=1;i<=n;i++)a.push(String(i));a.push("TA");return a}
 function tLabel(t){return t==="TA"?"กลับบ้าน":"โต๊ะ "+t}
-function ordersFor(t){return S.orders.filter(o=>o.table===t)}
+function contactOf(o){return S.contacts[o.id]||null}
+function taKey(o){const c=contactOf(o);return c?(c.phone||c.name||""):""}
+function ordersFor(t){let os=S.orders.filter(o=>o.table===t);
+  if(t==="TA"){if(S.customer==="TA"){const mine=S.myTA||[];os=os.filter(o=>mine.includes(o.id))}else if(S.table==="TA"&&S.ta){os=os.filter(o=>taKey(o)===S.ta.phone)}}
+  return os}
+function ctxLabel(t){if(t==="TA"){const c=S.customer==="TA"?S.taCust:S.ta;if(c)return "กลับบ้าน: "+c.name}return tLabel(t)}
+function orderLabel(o){if(o.table==="TA"){const c=contactOf(o);if(c)return "กลับบ้าน: "+c.name+(c.fromTable?" (สั่งจากโต๊ะ "+c.fromTable+")":"")}return tLabel(o.table)}
 function short(id){return "#"+String(id).slice(-4).toUpperCase()}
 let toastTimer;
 function toast(msg){let el=document.getElementById("toast");if(!el){el=document.createElement("div");el.id="toast";el.className="toast";el.setAttribute("role","status");document.body.appendChild(el)}el.textContent=msg;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.hidden=true},2600)}
@@ -324,7 +367,8 @@ function menuById(id){return S.menu.find(m=>m.id===id)}
 /* customer-sent items are priced from the current menu, never from what the phone sent */
 function linePrice(o,it){if(o.source==="customer"){const m=menuById(it.mid);return m?Number(m.price)||0:0}return Number(it.price)||0}
 function lineName(o,it){if(o.source==="customer"){const m=menuById(it.mid);return m?m.name:String(it.name||"")}return it.name}
-function billLines(t){const map=new Map();ordersFor(t).forEach(o=>(o.items||[]).forEach(it=>{const price=linePrice(o,it),name=lineName(o,it);const k=it.mid+"|"+price;const cur=map.get(k);const q=Math.max(0,Math.min(99,parseInt(it.qty)||0));if(cur)cur.qty+=q;else map.set(k,{name,price,qty:q})}));return [...map.values()].filter(l=>l.qty>0)}
+function billLines(t){const map=new Map();ordersFor(t).forEach(o=>(o.items||[]).forEach(it=>{const price=linePrice(o,it),name=lineName(o,it);const opt=it.opt||"";const k=it.mid+"|"+price+"|"+opt;const cur=map.get(k);const q=Math.max(0,Math.min(99,parseInt(it.qty)||0));if(cur)cur.qty+=q;else map.set(k,{name,price,qty:q,opt})}));return [...map.values()].filter(l=>l.qty>0)}
+function lineTxt(l){return esc(l.name)+(l.opt?' <span class="muted">('+esc(l.opt)+")</span>":"")}
 function calc(lines,discount){const sub=lines.reduce((s,l)=>s+l.price*l.qty,0);const disc=Math.min(sub,Math.max(0,Number(discount)||0));const base=sub-disc;const svc=Math.round(base*(Number(S.config.service)||0))/100;const vat=Math.round((base+svc)*(Number(S.config.vat)||0))/100;return {sub,disc,svc,vat,total:Math.round((base+svc+vat)*100)/100}}
 function cartTotal(){return S.cart.reduce((s,l)=>s+l.price*l.qty,0)}
 function cartCount(){return S.cart.reduce((s,l)=>s+l.qty,0)}
@@ -363,7 +407,7 @@ function readHash(){const h=(location.hash||"").slice(1).toLowerCase();
   if(h==="ta"){S.customer="TA";return}
   S.customer=null;S.view=VIEWS.includes(h)?h:"pos"}
 function go(v){S.view=v;S.table=null;S.sheet=null;try{history.replaceState(null,"","#"+v)}catch(e){}if(v==="report")subSales();if(v==="setup")S.setupLoaded=false;render();window.scrollTo(0,0)}
-window.addEventListener("hashchange",()=>{const was=S.customer;readHash();if(S.customer&&S.customer!==was)S.custStart=Date.now();subOrders();if(S.view==="report")subSales();render()});
+window.addEventListener("hashchange",()=>{const was=S.customer;readHash();if(was&&!S.customer){S.table=null;S.ta=null;S.cart=[];S.sheet=null}if(S.customer&&S.customer!==was)S.custStart=Date.now();subOrders();if(S.view==="report")subSales();render()});
 readHash();
 
 /* ---------- render ---------- */
@@ -409,9 +453,9 @@ function viewPos(){
   if(!S.menu.length)return importBox();
   return '<div class="tables">'+tableIds().map(t=>{
     const os=ordersFor(t);const total=calc(billLines(t),0).sub;
-    let cls="",state="ว่าง";
+    let cls="",state="ว่าง";if(t==="TA"&&os.length){const n=new Set(os.map(taKey)).size;state=n+" ราย"}
     if(os.length){cls="busy";state="กำลังทาน";
-      if(os.some(o=>o.status!=="served")){cls="wait";state="รออาหาร"}
+      if(os.some(o=>o.status!=="served")){cls="wait";state=t==="TA"?state:"รออาหาร"}
       if(os.some(o=>o.source==="customer"&&o.status==="new")){cls="alert";state="ลูกค้าสั่งใหม่"}}
     return '<button class="ttile '+cls+'" data-a="table" data-t="'+t+'"><span class="tnum'+(t==="TA"?" word":"")+'">'+(t==="TA"?"กลับบ้าน":t)+'</span><span><span class="tstate">'+state+'</span>'+(os.length?'<br><span class="tamt">'+baht(total)+"</span>":"")+"</span></button>"}).join("")+"</div>"}
 
@@ -432,22 +476,43 @@ function menuPicker(){
 function sentList(t,staff){
   const os=ordersFor(t);if(!os.length)return "";
   const stTxt={new:"รอครัว",cooking:"กำลังทำ",served:"เสิร์ฟแล้ว"};
-  return '<h2 class="section-title">สั่งแล้ว</h2><div class="sent">'+os.map(o=>'<div class="ticket-mini"><div class="row between"><span class="muted small">'+hm(o.createdAt)+(o.source==="customer"?" ลูกค้าสั่งเอง":"")+'</span><span class="status st-'+esc(o.status)+'">'+(o.status==="cooking"&&servedCount(o)&&(o.items||[]).length>1?"เสิร์ฟแล้ว "+servedCount(o)+"/"+(o.items||[]).length:(stTxt[o.status]||""))+"</span></div>"+
-   (o.items||[]).map((i,idx)=>"<div>"+(parseInt(i.qty)||0)+"× "+esc(lineName(o,i))+(i.opt?' <span style="color:var(--basil);font-weight:600">• '+esc(i.opt)+"</span>":"")+(i.note?' <span class="muted small">('+esc(i.note)+")</span>":"")+(o.status!=="served"&&servedMap(o)[idx]?' <span class="sdone">✓ เสิร์ฟแล้ว</span>':"")+"</div>").join("")+
-   (staff?'<div class="row" style="justify-content:flex-end;margin-top:6px">'+(S.arm==="void:"+o.id?'<button class="btn warn small" data-a="void" data-id="'+o.id+'">ยืนยันยกเลิกรายการนี้</button>':'<button class="btn ghost small" data-a="arm" data-k="void:'+o.id+'">ยกเลิก</button>')+"</div>":"")+"</div>").join("")+"</div>"}
+  return '<h2 class="section-title">สั่งแล้ว</h2><div class="sent">'+os.map(o=>{const items=o.items||[];
+   return '<div class="ticket-mini"><div class="row between"><span class="muted small">'+hm(o.createdAt)+(o.source==="customer"?" ลูกค้าสั่งเอง":"")+'</span><span class="status st-'+esc(o.status)+'">'+(o.status==="cooking"&&servedCount(o)&&items.length>1?"เสิร์ฟแล้ว "+servedCount(o)+"/"+items.length:(stTxt[o.status]||""))+"</span></div>"+
+   items.map((i,idx)=>{const m=menuById(i.mid);const q=parseInt(i.qty)||0;const k=o.id+":"+idx;
+     const txt=q+"× "+esc(lineName(o,i))+(i.opt?' <span style="color:var(--basil);font-weight:600">• '+esc(i.opt)+"</span>":"")+(i.note?' <span class="muted small">('+esc(i.note)+")</span>":"")+(o.status!=="served"&&servedMap(o)[idx]?' <span class="sdone">✓ เสิร์ฟแล้ว</span>':"");
+     if(!staff)return '<div class="irow"><span class="itext">'+txt+"</span></div>";
+     const acts=(m&&optGroupFor(m)?'<button class="btn ghost" data-a="itemSauce" data-id="'+o.id+'" data-i="'+idx+'">เปลี่ยนซอส</button>':"")+
+       (q>1?'<button class="btn ghost" data-a="itemMinus" data-id="'+o.id+'" data-i="'+idx+'">−1</button>':"")+
+       (S.arm==="idel:"+k?'<button class="btn warn" data-a="itemDel" data-id="'+o.id+'" data-i="'+idx+'">ยืนยันยกเลิก</button>':'<button class="btn ghost" data-a="arm" data-k="idel:'+k+'">ยกเลิก</button>');
+     return '<div class="irow"><span class="itext">'+txt+'</span><span class="iacts">'+acts+"</span></div>"}).join("")+
+   (staff&&items.length>1?'<div class="row" style="justify-content:flex-end;margin-top:8px">'+(S.arm==="void:"+o.id?'<button class="btn warn small" data-a="void" data-id="'+o.id+'">ยืนยันยกเลิกทั้งออเดอร์</button>':'<button class="btn ghost small" data-a="arm" data-k="void:'+o.id+'">ยกเลิกทั้งออเดอร์</button>')+"</div>":"")+"</div>"}).join("")+"</div>"}
 
+function viewTAList(){
+  const groups=new Map();S.orders.filter(o=>o.table==="TA").forEach(o=>{const c=contactOf(o);const key=c?(c.phone||c.name):"";let g=groups.get(key);if(!g){g={key,name:c?c.name:"ไม่ระบุชื่อ",phone:c?c.phone:"",from:c&&c.fromTable?c.fromTable:"",orders:[]};groups.set(key,g)}g.orders.push(o)});
+  const f=S.form;
+  let html='<button class="back" data-a="tables">‹ ทุกโต๊ะ</button><h2 style="font-size:28px;margin:4px 0 12px">กลับบ้าน</h2>'+
+   '<div class="panel" style="margin-bottom:18px"><h3 style="margin:0 0 10px;font-size:18px">รับออเดอร์กลับบ้านใหม่</h3><div class="grid2"><div class="field"><label for="taName">ชื่อลูกค้า</label><input id="taName" data-f="taName" value="'+esc(f.taName||"")+'" autocomplete="off"></div><div class="field"><label for="taPhone">เบอร์โทร</label><input id="taPhone" data-f="taPhone" type="tel" inputmode="tel" value="'+esc(f.taPhone||"")+'" autocomplete="off"></div></div><button class="btn" data-a="taStart">เริ่มสั่งอาหาร</button></div>';
+  html+='<h3 class="catttl">รอรับ / ยังไม่จ่าย<small>'+groups.size+" ราย</small></h3>";
+  if(!groups.size)return html+'<div class="empty">ยังไม่มีออเดอร์กลับบ้าน</div>';
+  return html+[...groups.values()].map(g=>{const sub=g.orders.reduce((s,o)=>s+(o.items||[]).reduce((a,i)=>a+linePrice(o,i)*(parseInt(i.qty)||0),0),0);const ready=g.orders.every(o=>o.status==="served");
+    return '<button class="tarow" data-a="taOpen" data-n="'+esc(g.name)+'" data-p="'+esc(g.key)+'"><span class="grow"><span class="nm">'+esc(g.name)+'</span><br><span class="muted">'+esc(g.phone||"-")+(g.from?"  สั่งจากโต๊ะ "+esc(g.from):"")+'</span></span><span class="status '+(ready?"st-served":"st-new")+'">'+(ready?"พร้อมรับ":"กำลังทำ")+'</span><span style="font-weight:600;font-size:18px">'+baht(sub)+"</span></button>"}).join("")}
 function viewTable(){
-  const t=S.table;const total=calc(billLines(t),0).sub;
-  return '<div class="row between wrapflex"><button class="back" data-a="tables">‹ ทุกโต๊ะ</button>'+(ordersFor(t).length?'<button class="btn bigbill" data-a="sheet" data-s="bill">🧾 เช็คบิล '+baht(total)+"</button>":"")+'</div><h2 style="font-size:28px;margin:4px 0 12px">'+tLabel(t)+"</h2>"+
+  const t=S.table;
+  if(t==="TA"&&!S.ta)return viewTAList();
+  const total=calc(billLines(t),0).sub;
+  const head=t==="TA"?'<h2 style="font-size:26px;margin:4px 0 4px">กลับบ้าน: '+esc(S.ta.name)+'</h2><p style="margin:0 0 12px;font-size:17px">📞 <a href="tel:'+esc(S.ta.phone)+'">'+esc(S.ta.phone||"-")+"</a></p>":'<h2 style="font-size:28px;margin:4px 0 12px">'+tLabel(t)+"</h2>";
+  return '<div class="row between wrapflex"><button class="back" data-a="'+(t==="TA"?"taBack":"tables")+'">‹ '+(t==="TA"?"รายการกลับบ้าน":"ทุกโต๊ะ")+'</button>'+(ordersFor(t).length?'<button class="btn bigbill" data-a="sheet" data-s="bill">🧾 เช็คบิล '+baht(total)+"</button>":"")+"</div>"+head+
    sentList(t,true)+'<h2 class="section-title">สั่งเพิ่ม</h2>'+menuPicker()}
 
 /* customer */
 function viewCustomer(){
   const t=S.customer;const valid=t==="TA"||tableIds().includes(t);
   if(!valid)return '<div class="wrap"><div class="panel empty">ไม่พบโต๊ะนี้ กรุณาแจ้งพนักงาน</div></div>';
+  if(t==="TA"&&!S.taCust&&custLeft()>0){const f=S.form;return '<div class="cust-hero"><p class="muted" style="margin:0">'+esc(S.config.shopName)+'</p><h1>สั่งกลับบ้าน</h1></div><main class="wrap"><div class="panel login" style="margin-top:8px"><p style="margin-top:0">กรุณากรอกชื่อและเบอร์โทร เพื่อให้ร้านเรียกเมื่ออาหารพร้อม</p>'+
+    '<div class="field"><label for="cName">ชื่อ</label><input id="cName" data-f="cName" autocomplete="name" value="'+esc(f.cName||"")+'"></div><div class="field"><label for="cPhone">เบอร์โทร</label><input id="cPhone" data-f="cPhone" type="tel" inputmode="tel" autocomplete="tel" value="'+esc(f.cPhone||"")+'"></div><button class="btn block" data-a="custTA">ถัดไป เลือกเมนู</button></div></main>'}
   const total=calc(billLines(t),0).sub;
   const left=custLeft();const exp=left<=0;
-  const hero='<div class="cust-hero"><p class="muted" style="margin:0">'+esc(S.config.shopName)+'</p><h1>'+tLabel(t)+'</h1>'+(exp?"":'<p class="muted small" style="margin:4px 0 0">เลือกเมนูแล้วกดส่งออเดอร์ อาหารจะส่งเข้าครัวทันที</p>'+(left!==Infinity?'<span class="ctimer'+(left<60000?" low":"")+'" role="timer">⏱ เหลือเวลาสั่ง <span id="ctime">'+mmss(left)+"</span></span>":""))+"</div>";
+  const hero='<div class="cust-hero"><p class="muted" style="margin:0">'+esc(S.config.shopName)+'</p><h1>'+esc(ctxLabel(t))+'</h1>'+(t==="TA"&&S.taCust?'<p class="muted small" style="margin:2px 0 0">📞 '+esc(S.taCust.phone)+' <button class="btn ghost small" style="min-height:30px;padding:2px 10px" data-a="custTAedit">แก้ไข</button></p>':"")+(exp?"":'<p class="muted small" style="margin:4px 0 0">เลือกเมนูแล้วกดส่งออเดอร์ อาหารจะส่งเข้าครัวทันที</p>'+(left!==Infinity?'<span class="ctimer'+(left<60000?" low":"")+'" role="timer">⏱ เหลือเวลาสั่ง <span id="ctime">'+mmss(left)+"</span></span>":""))+"</div>";
   if(exp)return hero+'<main class="wrap"><div class="panel expired"><div class="big">⏱</div><h2>หมดเวลาสั่งอาหาร</h2><p class="muted">ถ้าต้องการสั่งเพิ่ม กรุณาสแกน QR ที่โต๊ะอีกครั้ง</p></div>'+sentList(t,false)+(total?'<div class="panel row between"><span>ยอดรวมตอนนี้</span><span class="grand">'+baht(total)+"</span></div>":"")+"</main>";
   return hero+'<main class="wrap">'+
    menuPicker()+sentList(t,false)+(total?'<div class="panel row between"><span>ยอดรวมตอนนี้</span><span class="grand">'+baht(total)+'</span></div><p class="muted small">ชำระเงินกับพนักงานได้เลยเมื่อทานเสร็จ</p>':"")+"</main>"}
@@ -462,7 +527,7 @@ function kCard(o){const age=Math.max(0,Math.floor((Date.now()-o.createdAt)/60000
   const list=isNew?'<ul class="kplain">'+items.map(i=>"<li><b>"+(parseInt(i.qty)||0)+"×</b><span>"+detail(i)+"</span></li>").join("")+"</ul>":
     '<ul class="kticks">'+items.map((i,idx)=>'<li><button class="kitem'+(sm[idx]?" done":"")+'" data-a="tick" data-id="'+o.id+'" data-i="'+idx+'" aria-pressed="'+(!!sm[idx])+'"><span class="kbox" aria-hidden="true">'+(sm[idx]?"✓":"")+'</span><b>'+(parseInt(i.qty)||0)+'×</b><span class="kname">'+detail(i)+"</span></button></li>").join("")+"</ul>"+
     (items.length>1?'<p class="kprog">เสิร์ฟแล้ว '+done+" จาก "+items.length+" รายการ</p>":"");
-  return '<article class="kcard '+(isNew?"knew":"kcook")+(late?" late":"")+'"><div class="khead"><span class="ktable">'+tLabel(o.table)+'</span><span class="kage">'+(late?'<span class="fire" aria-hidden="true">🔥</span> ':"")+(age<1?"เพิ่งสั่ง":age+" นาที")+'</span></div><div class="src">'+short(o.id)+"  "+hm(o.createdAt)+(o.source==="customer"?"  ลูกค้าสั่งเอง":"")+"</div>"+list+
+  return '<article class="kcard '+(isNew?"knew":"kcook")+(late?" late":"")+'"><div class="khead"><span class="ktable">'+esc(orderLabel(o))+'</span><span class="kage">'+(late?'<span class="fire" aria-hidden="true">🔥</span> ':"")+(age<1?"เพิ่งสั่ง":age+" นาที")+'</span></div><div class="src">'+short(o.id)+"  "+hm(o.createdAt)+(o.source==="customer"?"  ลูกค้าสั่งเอง":"")+"</div>"+list+
     (isNew?'<button class="btn block red huge" data-a="status" data-id="'+o.id+'" data-st="cooking">เริ่มทำ</button>':'<button class="btn block green huge" data-a="serveAll" data-id="'+o.id+'">'+(items.length>1?"เสิร์ฟแล้วทั้งหมด":"เสิร์ฟแล้ว")+"</button>")+"</article>"}
 
 function viewKitchen(){
@@ -493,20 +558,25 @@ function viewMenu(){
   return html}
 
 /* report */
+function monthRange(ym){const [y,m]=ym.split("-").map(Number);const last=new Date(y,m,0).getDate();return [ym+"-01",ym+"-"+String(last).padStart(2,"0"),last]}
 function viewReport(){
-  const d=S.reportDate;const day=S.sales.filter(s=>s.date===d);
-  const total=day.reduce((s,x)=>s+(x.total||0),0);const cnt=day.length;
-  const byM={cash:0,promptpay:0};day.forEach(s=>{byM[s.method]=(byM[s.method]||0)+(s.total||0)});
-  const items=new Map();day.forEach(s=>(s.items||[]).forEach(i=>{const c=items.get(i.name)||{q:0,v:0};c.q+=i.qty;c.v+=i.qty*i.price;items.set(i.name,c)}));
-  const top=[...items.entries()].sort((a,b)=>b[1].q-a[1].q).slice(0,10);
-  const days=[];for(let i=6;i>=0;i--){const ds=addDays(d,-i);days.push([ds,S.sales.filter(s=>s.date===ds).reduce((a,x)=>a+(x.total||0),0)])}
-  const max=Math.max(1,...days.map(x=>x[1]));
-  const dn=["อา.","จ.","อ.","พ.","พฤ.","ศ.","ส."];
-  return '<div class="row between wrapflex" style="margin-bottom:14px"><h2>ยอดขาย</h2><div class="row"><input id="rDate" type="date" value="'+d+'" data-f="reportDate" class="note-in" style="width:auto;margin:0;min-height:40px"><button class="btn ghost small" data-a="csv"'+(cnt?"":" disabled")+">ส่งออก CSV</button></div></div>"+
-   '<div class="stats"><div class="panel stat"><div class="muted small">ยอดขายรวม</div><div class="v">'+baht(total)+'</div></div><div class="panel stat"><div class="muted small">จำนวนบิล</div><div class="v">'+cnt+'</div></div><div class="panel stat"><div class="muted small">เฉลี่ยต่อบิล</div><div class="v">'+baht(cnt?total/cnt:0)+'</div></div><div class="panel stat"><div class="muted small">เงินสด / พร้อมเพย์</div><div class="v" style="font-size:20px">'+baht(byM.cash||0)+" / "+baht(byM.promptpay||0)+"</div></div></div>"+
-   '<h2 class="section-title">7 วันล่าสุด</h2><div class="panel"><div class="bars">'+days.map(([ds,v])=>{const dd=new Date(ds+"T12:00:00");return '<div class="bcol'+(ds===d?" sel":"")+'" title="'+ds+" "+baht(v)+'"><span>'+(v?Math.round(v).toLocaleString("th-TH"):"")+'</span><div class="bfill" style="height:'+Math.round(v/max*100)+'%"></div><span>'+dn[dd.getDay()]+" "+dd.getDate()+"</span></div>"}).join("")+"</div></div>"+
-   '<h2 class="section-title">เมนูขายดี</h2><div class="panel list" style="padding:0 16px">'+(top.length?top.map(([n,c],i)=>'<div class="lrow"><span class="muted" style="width:22px">'+(i+1)+'</span><span class="grow">'+esc(n)+'</span><span>'+c.q+' จาน</span><span class="muted" style="min-width:80px;text-align:right">'+baht(c.v)+"</span></div>").join(""):'<div class="empty">ยังไม่มีการขายในวันนี้</div>')+"</div>"+
-   '<h2 class="section-title">บิลทั้งหมด</h2><div class="panel list" style="padding:0 16px">'+(cnt?day.slice().sort((a,b)=>b.paidAt-a.paidAt).map(s=>'<div class="lrow"><span class="muted" style="width:52px">'+hm(s.paidAt)+'</span><span class="grow">'+esc(s.tableLabel||tLabel(s.table))+'</span><span class="muted small">'+(s.method==="promptpay"?"พร้อมเพย์":"เงินสด")+'</span><span style="min-width:80px;text-align:right;font-weight:600">'+baht(s.total)+"</span></div>").join(""):'<div class="empty">ยังไม่มีบิล</div>')+"</div>"}
+  const ym=S.reportMonth;const [st,en,last]=monthRange(ym);const td=today();
+  const ms=S.sales.filter(x=>x.date>=st&&x.date<=en);
+  const total=ms.reduce((a,x)=>a+(x.total||0),0);const cnt=ms.length;
+  const byDay={};ms.forEach(x=>{const r=byDay[x.date]||(byDay[x.date]={v:0,n:0});r.v+=x.total||0;r.n++});
+  const daysWith=Object.keys(byDay).length;const best=Object.entries(byDay).sort((a,b)=>b[1].v-a[1].v)[0];
+  const byM={cash:0,promptpay:0};ms.forEach(x=>{byM[x.method]=(byM[x.method]||0)+(x.total||0)});
+  const it=new Map();ms.forEach(x=>(x.items||[]).forEach(i=>{const c=it.get(i.name)||{q:0,v:0};c.q+=i.qty;c.v+=i.qty*i.price;it.set(i.name,c)}));const top=[...it.entries()].sort((a,b)=>b[1].q-a[1].q).slice(0,10);
+  const label=new Date(st+"T12:00:00").toLocaleDateString("th-TH",{month:"long",year:"numeric"});
+  const isCur=ym===td.slice(0,7);const lastDay=isCur?parseInt(td.slice(8)):last;
+  const max=Math.max(1,...Object.values(byDay).map(r=>r.v));
+  const rows=[];for(let d=lastDay;d>=1;d--){const ds=ym+"-"+String(d).padStart(2,"0");const r=byDay[ds]||{v:0,n:0};
+    rows.push('<button class="dayrow'+(r.v?"":" zero")+'" data-a="day" data-d="'+ds+'"><span>'+new Date(ds+"T12:00:00").toLocaleDateString("th-TH",{weekday:"short",day:"numeric"})+(ds===td?' <span class="tag">วันนี้</span>':"")+'</span><span class="dbar" style="width:'+Math.max(1,Math.round(r.v/max*100))+'%"></span><span class="damt">'+baht(r.v)+"<small>"+r.n+" บิล</small></span></button>")}
+  return '<div class="row between wrapflex" style="margin-bottom:14px"><div class="mnav"><button class="btn ghost" data-a="month" data-d="-1" aria-label="เดือนก่อน">‹</button><h2>'+label+'</h2><button class="btn ghost" data-a="month" data-d="1" aria-label="เดือนถัดไป"'+(isCur?" disabled":"")+'>›</button></div><button class="btn ghost small" data-a="csvMonth"'+(cnt?"":" disabled")+">ส่งออก CSV ทั้งเดือน</button></div>"+
+   '<div class="stats"><div class="panel stat"><div class="muted small">ยอดขายทั้งเดือน</div><div class="v">'+baht(total)+'</div></div><div class="panel stat"><div class="muted small">จำนวนบิล</div><div class="v">'+cnt+'</div></div><div class="panel stat"><div class="muted small">เฉลี่ยต่อวันที่เปิดขาย</div><div class="v">'+baht(daysWith?total/daysWith:0)+'</div></div><div class="panel stat"><div class="muted small">วันที่ขายดีที่สุด</div><div class="v" style="font-size:20px">'+(best?new Date(best[0]+"T12:00:00").toLocaleDateString("th-TH",{day:"numeric",month:"short"})+" "+baht(best[1].v):"-")+"</div></div></div>"+
+   '<p class="muted" style="margin:10px 2px">เงินสด '+baht(byM.cash||0)+"  พร้อมเพย์ "+baht(byM.promptpay||0)+"</p>"+
+   '<h2 class="section-title">ยอดขายรายวัน <span class="muted small" style="font-weight:400">แตะวันที่เพื่อดูบิลทั้งหมด</span></h2><div class="panel" style="padding:4px 14px">'+(rows.length?rows.join(""):'<div class="empty">ไม่มีข้อมูล</div>')+"</div>"+
+   '<h2 class="section-title">เมนูขายดีประจำเดือน</h2><div class="panel list" style="padding:0 16px">'+(top.length?top.map(([n,c],i)=>'<div class="lrow"><span class="muted" style="width:22px">'+(i+1)+'</span><span class="grow">'+esc(n)+'</span><span>'+c.q+' จาน</span><span class="muted" style="min-width:80px;text-align:right">'+baht(c.v)+"</span></div>").join(""):'<div class="empty">ยังไม่มีการขายในเดือนนี้</div>')+"</div>"}
 
 /* setup */
 function viewSetup(){
@@ -535,26 +605,48 @@ function sheetHtml(){
   if(!S.sheet)return "";
   let title="",body="",foot="";
   const t=S.customer||S.table;
-  if(S.sheet==="cart"){title="ตะกร้า "+tLabel(t);
+  if(S.sheet==="cart"){title="ตะกร้า "+ctxLabel(t);
     body=S.cart.length?S.cart.map((l,i)=>'<div class="lrow" style="flex-wrap:wrap"><div class="grow"><div>'+esc(l.name)+'</div>'+optHtml(l)+'<div class="muted small">'+baht(l.price*l.qty)+'</div></div><div class="qty"><button data-a="qty" data-i="'+i+'" data-d="-1" aria-label="ลด">−</button><span>'+l.qty+'</span><button data-a="qty" data-i="'+i+'" data-d="1" aria-label="เพิ่ม">+</button></div><input class="note-in" id="note'+i+'" data-f="note:'+i+'" maxlength="80" value="'+esc(l.note||"")+'" placeholder="หมายเหตุ เช่น สุกมาก ไม่ใส่ผัก"></div>').join(""):'<div class="empty">ตะกร้าว่าง</div>';
-    foot=(S.customer&&custLeft()!==Infinity?'<div style="text-align:center;margin-bottom:8px"><span class="ctimer'+(custLeft()<60000?" low":"")+'">⏱ เหลือเวลาสั่ง <span id="ctime2">'+mmss(custLeft())+"</span></span></div>":"")+'<div class="row between" style="margin-bottom:10px"><span>รวม</span><span class="grand">'+baht(cartTotal())+'</span></div><button class="btn block" data-a="send"'+(S.cart.length&&!S.busy?"":" disabled")+">"+(S.customer?"ส่งออเดอร์":"ส่งเข้าครัว")+"</button>"}
+    foot=(S.customer&&custLeft()!==Infinity?'<div style="text-align:center;margin-bottom:8px"><span class="ctimer'+(custLeft()<60000?" low":"")+'">⏱ เหลือเวลาสั่ง <span id="ctime2">'+mmss(custLeft())+"</span></span></div>":"")+'<div class="row between" style="margin-bottom:10px"><span>รวม</span><span class="grand">'+baht(cartTotal())+'</span></div>'+(S.customer?'<button class="btn block" data-a="toConfirm"'+(S.cart.length?"":" disabled")+">ถัดไป ทวนรายการ</button>":'<button class="btn block" data-a="send"'+(S.cart.length&&!S.busy?"":" disabled")+">ส่งเข้าครัว</button>")}
+  else if(S.sheet==="confirm"){const isTAlink=S.customer==="TA";title="ทวนรายการก่อนส่ง";
+    body=S.cart.map(l=>'<div class="rvrow"><span><b>'+l.qty+"×</b> "+esc(l.name)+(l.opt?'<br><span style="color:var(--basil);font-weight:600;font-size:15px">• '+esc(l.opt)+"</span>":"")+(l.note?'<br><span class="muted small">'+esc(l.note)+"</span>":"")+"</span><span>"+baht(l.price*l.qty)+"</span></div>").join("")+
+      '<div class="row between" style="margin:10px 0 4px"><span style="font-weight:600">รวม</span><span class="grand">'+baht(cartTotal())+"</span></div>";
+    if(isTAlink)body+='<p class="muted" style="margin:8px 0 0">สั่งกลับบ้านในชื่อ <b>'+esc(S.taCust?S.taCust.name:"")+"</b> "+esc(S.taCust?S.taCust.phone:"")+"</p>";
+    else{body+='<div class="dinechoice" role="radiogroup" aria-label="รูปแบบการสั่ง"><button class="dinebtn" role="radio" data-a="dine" data-v="in" aria-pressed="'+(S.dine==="in")+'" aria-checked="'+(S.dine==="in")+'"><span class="ic">🍽️</span>ทานที่ร้าน<span class="fromt">'+tLabel(S.customer)+'</span></button><button class="dinebtn" role="radio" data-a="dine" data-v="ta" aria-pressed="'+(S.dine==="ta")+'" aria-checked="'+(S.dine==="ta")+'"><span class="ic">🛍️</span>สั่งกลับบ้าน<span class="fromt">แยกบิล</span></button></div>';
+      if(S.dine==="ta"){const f=S.form;body+='<div class="field"><label for="cName">ชื่อ</label><input id="cName" data-f="cName" autocomplete="name" value="'+esc(f.cName!=null?f.cName:(S.taCust?S.taCust.name:""))+'"></div><div class="field"><label for="cPhone">เบอร์โทร</label><input id="cPhone" data-f="cPhone" type="tel" inputmode="tel" autocomplete="tel" value="'+esc(f.cPhone!=null?f.cPhone:(S.taCust?S.taCust.phone:""))+'"></div>'}}
+    foot=(custLeft()!==Infinity?'<div style="text-align:center;margin-bottom:8px"><span class="ctimer'+(custLeft()<60000?" low":"")+'">⏱ เหลือเวลาสั่ง <span id="ctime2">'+mmss(custLeft())+"</span></span></div>":"")+
+      '<div class="row"><button class="btn ghost" style="flex:1" data-a="backCart">แก้ไข</button><button class="btn" style="flex:2" data-a="send"'+((isTAlink||S.dine)&&!S.busy?"":" disabled")+">"+(isTAlink||S.dine?"ยืนยันส่งออเดอร์":"เลือกด้านบนก่อน")+"</button></div>"}
   else if(S.sheet==="opt"){const m=menuById(S.optFor);const g=optGroupFor(m);if(!m||!g){S.sheet=null;return ""}
     title=m.name+" "+baht(m.price);
     body=(imgFor(m)?'<img class="opthero" src="'+esc(imgFor(m))+'" alt="" onerror="this.remove()">':"")+'<p class="muted" style="margin:0 0 10px">'+esc(g.title)+'</p><div class="optlist" role="radiogroup">'+g.choices.map(c=>'<button class="optbtn" role="radio" data-a="pick" data-v="'+esc(c)+'" aria-checked="'+(S.optPick===c)+'" aria-pressed="'+(S.optPick===c)+'">'+esc(c)+"</button>").join("")+"</div>";
-    foot='<button class="btn block" data-a="addOpt"'+(S.optPick?"":" disabled")+">"+(S.optPick?"เพิ่มลงตะกร้า":"เลือกซอสก่อน")+"</button>"}
+    foot=S.optEdit?'<button class="btn block" data-a="saveOpt"'+(S.optPick?"":" disabled")+">บันทึกซอสใหม่</button>":'<button class="btn block" data-a="addOpt"'+(S.optPick?"":" disabled")+">"+(S.optPick?"เพิ่มลงตะกร้า":"เลือกซอสก่อน")+"</button>"}
+  else if(S.sheet==="day"&&S.dayDate){const d=S.dayDate;const day=S.sales.filter(x=>x.date===d).sort((a,b)=>b.paidAt-a.paidAt);
+    title="ยอดขาย "+new Date(d+"T12:00:00").toLocaleDateString("th-TH",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+    const tot=day.reduce((a,x)=>a+(x.total||0),0);const byM={cash:0,promptpay:0};day.forEach(x=>{byM[x.method]=(byM[x.method]||0)+(x.total||0)});
+    const it=new Map();day.forEach(x=>(x.items||[]).forEach(i=>{const c=it.get(i.name)||{q:0,v:0};c.q+=i.qty;c.v+=i.qty*i.price;it.set(i.name,c)}));const top=[...it.entries()].sort((a,b)=>b[1].q-a[1].q).slice(0,10);
+    body='<div class="stats" style="grid-template-columns:repeat(2,1fr)"><div class="panel stat"><div class="muted small">ยอดขาย</div><div class="v">'+baht(tot)+'</div></div><div class="panel stat"><div class="muted small">จำนวนบิล</div><div class="v">'+day.length+'</div></div></div><p class="muted" style="margin:10px 0">เงินสด '+baht(byM.cash||0)+"  พร้อมเพย์ "+baht(byM.promptpay||0)+"</p>"+
+      (top.length?'<h3 class="catttl">เมนูขายดีวันนี้</h3>'+top.map(([n,c],i)=>'<div class="row between" style="padding:4px 0"><span>'+(i+1)+". "+esc(n)+"</span><span>"+c.q+" จาน  "+baht(c.v)+"</span></div>").join(""):"")+
+      '<h3 class="catttl">บิลทั้งหมด<small>แตะเพื่อดูรายละเอียด</small></h3>'+(day.length?day.map(x=>{const open=!!S.openBills[x.id];
+        return '<div class="billrow'+(open?" open":"")+'"><button class="billhead" data-a="billToggle" data-id="'+x.id+'" aria-expanded="'+open+'"><span class="chev">›</span><span style="width:52px" class="muted">'+hm(x.paidAt)+'</span><span style="flex:1">'+esc(x.tableLabel||tLabel(x.table))+'</span><span class="muted small">'+(x.method==="promptpay"?"พร้อมเพย์":"เงินสด")+'</span><span style="font-weight:600;min-width:72px;text-align:right">'+baht(x.total)+"</span></button>"+
+        (open?'<div class="billbody">'+(x.items||[]).map(i=>'<div class="row"><span>'+i.qty+"× "+lineTxt(i)+' <span class="muted small">@'+baht(i.price)+"</span></span><span>"+baht(i.qty*i.price)+"</span></div>").join("")+"<hr>"+
+          '<div class="row"><span>รวม</span><span>'+baht(x.subtotal)+"</span></div>"+(x.discount?'<div class="row"><span>ส่วนลด</span><span>−'+baht(x.discount)+"</span></div>":"")+(x.service?'<div class="row"><span>เซอร์วิสชาร์จ</span><span>'+baht(x.service)+"</span></div>":"")+(x.vat?'<div class="row"><span>VAT</span><span>'+baht(x.vat)+"</span></div>":"")+
+          '<div class="row" style="font-weight:600"><span>ยอดชำระ</span><span>'+baht(x.total)+"</span></div>"+'<div class="row"><span>'+(x.method==="promptpay"?"พร้อมเพย์":"รับเงินสด")+"</span><span>"+baht(x.received||x.total)+"</span></div>"+(x.method==="cash"&&x.received>x.total?'<div class="row"><span>เงินทอน</span><span>'+baht(x.received-x.total)+"</span></div>":"")+
+          (x.custName?'<hr><div>ลูกค้า: '+esc(x.custName)+(x.custPhone?' 📞 <a href="tel:'+esc(x.custPhone)+'">'+esc(x.custPhone)+"</a>":"")+"</div>":"")+
+          '<div class="muted small" style="margin-top:6px">ชำระเมื่อ '+new Date(x.paidAt).toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"})+"</div></div>":"")+"</div>"}).join(""):'<div class="empty">ไม่มีบิลในวันนี้</div>');
+    foot='<div class="row"><button class="btn ghost" style="flex:1" data-a="csvDay"'+(day.length?"":" disabled")+'>ส่งออก CSV</button><button class="btn" style="flex:1" data-a="close">ปิด</button></div>'}
   else if(S.sheet==="summary"){title="สรุปรายการที่ต้องทำ";
     const act=S.orders.filter(o=>o.status==="new"||o.status==="cooking");const map=new Map();
     act.forEach(o=>(o.items||[]).forEach((i,idx)=>{if(servedMap(o)[idx])return;const nm=lineName(o,i);const q=parseInt(i.qty)||0;if(!q)return;let r=map.get(nm);if(!r){const m=menuById(i.mid);r={nm,q:0,qn:0,qc:0,opts:new Map(),notes:[],sort:m?(categories().indexOf(m.cat||"อื่น ๆ")*10000+(m.sort||0)):1e9};map.set(nm,r)}
-      r.q+=q;if(o.status==="new")r.qn+=q;else r.qc+=q;if(i.opt)r.opts.set(i.opt,(r.opts.get(i.opt)||0)+q);if(i.note)r.notes.push(tLabel(o.table)+": "+i.note)}));
+      r.q+=q;if(o.status==="new")r.qn+=q;else r.qc+=q;if(i.opt)r.opts.set(i.opt,(r.opts.get(i.opt)||0)+q);if(i.note)r.notes.push(orderLabel(o)+": "+i.note)}));
     const rows=[...map.values()].sort((a,b)=>a.sort-b.sort);const total=rows.reduce((s,r)=>s+r.q,0);
     body=rows.length?'<p class="muted" style="margin:0 0 6px">ทั้งหมด '+total+" จาน จาก "+act.length+" ออเดอร์</p>"+rows.map(r=>'<div class="sumrow"><div class="top"><span class="nm">'+esc(r.nm)+'</span><span class="qtyb">×'+r.q+'</span></div><div class="sub">ยังไม่รับ '+r.qn+"  กำลังทำ "+r.qc+"</div>"+
       (r.opts.size?'<div class="sub">'+[...r.opts.entries()].map(([k,v])=>"<b>"+esc(k)+" ×"+v+"</b>").join("  ")+"</div>":"")+
       (r.notes.length?'<div class="sub" style="color:var(--chili)">'+r.notes.map(esc).join("<br>")+"</div>":"")+"</div>").join(""):'<div class="empty">ไม่มีรายการที่ต้องทำ</div>';
     foot='<button class="btn block" data-a="close">ปิด</button>'}
-  else if(S.sheet==="bill"){title="เช็คบิล "+tLabel(t);
+  else if(S.sheet==="bill"){title="เช็คบิล "+ctxLabel(t);
     const lines=billLines(t);const c=calc(lines,S.form.discount);
     const recv=Number(S.form.received)||0;
-    body=lines.map(l=>'<div class="row between"><span>'+l.qty+"× "+esc(l.name)+"</span><span>"+baht(l.price*l.qty)+"</span></div>").join("")+
+    body=lines.map(l=>'<div class="row between"><span>'+l.qty+"× "+lineTxt(l)+"</span><span>"+baht(l.price*l.qty)+"</span></div>").join("")+
      '<div class="totals" style="border-top:1px solid var(--line);padding-top:10px"><div class="row"><span>รวม</span><span>'+baht(c.sub)+'</span></div><div class="row"><label for="disc">ส่วนลด (บาท)</label><input id="disc" data-f="discount" type="number" inputmode="decimal" min="0" class="note-in" style="width:110px;margin:0;text-align:right" value="'+esc(S.form.discount||"")+'"></div>'+
      (c.svc?'<div class="row"><span>เซอร์วิสชาร์จ '+S.config.service+'%</span><span>'+baht(c.svc)+"</span></div>":"")+(c.vat?'<div class="row"><span>VAT '+S.config.vat+'%</span><span>'+baht(c.vat)+"</span></div>":"")+
      '<div class="row" style="margin-top:6px"><span style="font-weight:600">ยอดชำระ</span><span class="grand">'+baht(c.total)+"</span></div></div>"+
@@ -568,7 +660,7 @@ function sheetHtml(){
     foot='<button class="btn block" data-a="pay"'+(lines.length&&!short_&&!S.busy?"":" disabled")+">รับชำระแล้ว "+baht(c.total)+"</button>"}
   else if(S.sheet==="receipt"&&S.receipt){const r=S.receipt;title="ชำระเงินเรียบร้อย";
     body='<div class="receipt"><div class="rc"><div class="num" style="font-size:20px">'+esc(S.config.shopName)+'</div><div class="small">'+esc(r.tableLabel)+"  "+new Date(r.paidAt).toLocaleString("th-TH",{dateStyle:"short",timeStyle:"short"})+"</div></div><hr>"+
-     r.items.map(i=>'<div class="row between"><span>'+i.qty+"× "+esc(i.name)+"</span><span>"+baht(i.qty*i.price)+"</span></div>").join("")+"<hr>"+
+     r.items.map(i=>'<div class="row between"><span>'+i.qty+"× "+lineTxt(i)+"</span><span>"+baht(i.qty*i.price)+"</span></div>").join("")+"<hr>"+(r.custName?'<div class="small">ลูกค้า: '+esc(r.custName)+" "+esc(r.custPhone||"")+"</div><hr>":"")+
      '<div class="row between"><span>รวม</span><span>'+baht(r.subtotal)+"</span></div>"+(r.discount?'<div class="row between"><span>ส่วนลด</span><span>−'+baht(r.discount)+"</span></div>":"")+(r.service?'<div class="row between"><span>เซอร์วิสชาร์จ</span><span>'+baht(r.service)+"</span></div>":"")+(r.vat?'<div class="row between"><span>VAT</span><span>'+baht(r.vat)+"</span></div>":"")+
      '<div class="row between" style="font-weight:600;font-size:18px"><span>ยอดชำระ</span><span>'+baht(r.total)+"</span></div>"+
      '<div class="row between"><span>'+(r.method==="promptpay"?"พร้อมเพย์":"เงินสด")+"</span><span>"+baht(r.received||r.total)+"</span></div>"+(r.method==="cash"&&r.received>r.total?'<div class="row between"><span>เงินทอน</span><span>'+baht(r.received-r.total)+"</span></div>":"")+'<hr><div class="rc small">ขอบคุณที่ใช้บริการ</div></div>';
@@ -583,7 +675,7 @@ async function guard(fn,fail){try{await fn()}catch(e){console.error(e);const cod
 
 document.addEventListener("click",async e=>{
   const el=e.target.closest("[data-a]");if(!el)return;const a=el.dataset.a;
-  if(a==="scrim"){if(e.target===el){S.sheet=null;render()}return}
+  if(a==="scrim"){if(e.target===el){if(S.sheet==="receipt"&&S.table==="TA")S.ta=null;S.sheet=null;S.optEdit=null;render()}return}
   if(a!=="arm"&&a!=="delMenu"&&a!=="void")S.arm=null;
   switch(a){
   case "go":go(el.dataset.v);break;
@@ -592,8 +684,8 @@ document.addEventListener("click",async e=>{
     try{await signInWithEmailAndPassword(auth,email,pw);S.form.lPw=""}catch(err){const c=err&&err.code||"";S.loginErr=/invalid|wrong|not-found|user/.test(c)?"อีเมลหรือรหัสผ่านไม่ถูกต้อง":c==="auth/too-many-requests"?"ลองผิดหลายครั้งเกินไป รอสักครู่แล้วลองใหม่":c==="auth/network-request-failed"?"ไม่มีอินเทอร์เน็ต":"เข้าสู่ระบบไม่สำเร็จ ("+c+")"}
     S.busy=false;render();break}
   case "logout":await signOut(auth);S.view="pos";render();break;
-  case "table":S.table=el.dataset.t;S.cart=[];S.cat=null;render();window.scrollTo(0,0);break;
-  case "tables":S.table=null;S.cart=[];render();break;
+  case "table":S.ta=null;S.table=el.dataset.t;S.cart=[];S.cat=null;render();window.scrollTo(0,0);break;
+  case "tables":S.table=null;S.ta=null;S.cart=[];render();break;
   case "cat":S.cat=el.dataset.c||null;render();break;
   case "add":{if(custExpired()){render();return}const m=menuById(el.dataset.id);if(!m||m.available===false)return;
     if(optGroupFor(m)){S.optFor=m.id;S.optPick=null;S.sheet="opt";render();return}
@@ -604,30 +696,65 @@ document.addEventListener("click",async e=>{
     await guard(async()=>{const upd={["served."+idx]:!!cur[idx]};if(all)upd.status="served";await updateDoc(dref("orders/"+o.id),upd);if(all)toast(tLabel(o.table)+" เสิร์ฟครบแล้ว")});break}
   case "serveAll":{const o=S.orders.find(x=>x.id===el.dataset.id);if(!o)return;el.disabled=true;const all={};(o.items||[]).forEach((_,k)=>all[k]=true);
     await guard(async()=>{await updateDoc(dref("orders/"+o.id),{served:all,status:"served"});toast(tLabel(o.table)+" เสิร์ฟครบแล้ว")});break}
+  case "toConfirm":if(custExpired()){render();return}S.sheet="confirm";render();break;
+  case "backCart":S.sheet="cart";render();break;
+  case "dine":S.dine=el.dataset.v;render();break;
   case "pick":S.optPick=el.dataset.v;render();break;
-  case "addOpt":{const m=menuById(S.optFor);if(!m||!S.optPick)return;const l=S.cart.find(x=>x.mid===m.id&&x.opt===S.optPick&&!x.note);if(l)l.qty++;else S.cart.push({mid:m.id,name:m.name,price:Number(m.price)||0,qty:1,note:"",opt:S.optPick});S.sheet=null;S.optFor=null;toast("เพิ่ม "+m.name+" แล้ว");render();break}
+  case "addOpt":{if(S.optEdit)return;const m=menuById(S.optFor);if(!m||!S.optPick)return;const l=S.cart.find(x=>x.mid===m.id&&x.opt===S.optPick&&!x.note);if(l)l.qty++;else S.cart.push({mid:m.id,name:m.name,price:Number(m.price)||0,qty:1,note:"",opt:S.optPick});S.sheet=null;S.optFor=null;toast("เพิ่ม "+m.name+" แล้ว");render();break}
   case "qty":{const i=+el.dataset.i;S.cart[i].qty=Math.min(99,S.cart[i].qty+(+el.dataset.d));if(S.cart[i].qty<=0)S.cart.splice(i,1);if(!S.cart.length)S.sheet=null;render();break}
   case "sheet":S.sheet=el.dataset.s;if(S.sheet==="bill"){S.form.discount="";S.form.received="";S.method="cash"}render();break;
-  case "close":S.sheet=null;render();break;
+  case "close":if(S.sheet==="receipt"&&S.table==="TA")S.ta=null;S.sheet=null;S.optEdit=null;render();break;
   case "send":{if(custExpired()){S.sheet=null;S.cart=[];toast("หมดเวลาสั่งอาหาร กรุณาสแกน QR อีกครั้ง");render();return}
-    const t=S.customer||S.table;const items=S.cart.map(l=>({mid:l.mid,name:l.name,price:l.price,qty:l.qty,note:(l.note||"").trim().slice(0,80),opt:l.opt||""}));
+    let t=S.customer||S.table;let who=null,fromTable="";
+    if(S.customer==="TA")who=S.taCust;
+    else if(S.customer){if(S.dine==="ta"){const name=String(S.form.cName!=null?S.form.cName:(S.taCust?S.taCust.name:"")).trim().slice(0,60);const phone=String(S.form.cPhone!=null?S.form.cPhone:(S.taCust?S.taCust.phone:"")).replace(/[^\d+]/g,"").slice(0,15);
+        if(!name){toast("กรุณาใส่ชื่อ");return}if(phone.replace(/\D/g,"").length<9){toast("กรุณาใส่เบอร์โทรให้ครบ");return}
+        who={name,phone};fromTable=S.customer;t="TA";S.taCust=who;ssSet("taCust",who)}
+      else if(S.dine!=="in"){toast("กรุณาเลือก ทานที่ร้าน หรือ สั่งกลับบ้าน");return}}
+    else if(t==="TA")who=S.ta;
+    if(t==="TA"&&!who){toast("กรุณาใส่ชื่อและเบอร์โทรก่อน");return}
+    const items=S.cart.map(l=>({mid:l.mid,name:l.name,price:l.price,qty:l.qty,note:(l.note||"").trim().slice(0,80),opt:l.opt||""}));
     S.busy=true;render();
-    await guard(async()=>{await addDoc(col("orders"),{table:t,items,status:"new",createdAt:Date.now(),source:S.customer?"customer":"staff"});S.cart=[];S.sheet=null;toast(S.customer?"ส่งออเดอร์แล้ว รออาหารสักครู่":"ส่งเข้าครัวแล้ว")},S.customer?"ส่งออเดอร์ไม่สำเร็จ กรุณาเรียกพนักงาน":null);
+    await guard(async()=>{const ref=doc(col("orders"));const b=writeBatch(fs);b.set(ref,{table:t,items,status:"new",createdAt:Date.now(),source:S.customer?"customer":"staff"});
+      if(who){const c={name:String(who.name).slice(0,60),phone:String(who.phone).slice(0,20),createdAt:Date.now()};if(fromTable)c.fromTable=fromTable;b.set(dref("contacts/"+ref.id),c)}
+      await b.commit();if(S.customer&&t==="TA"){S.myTA=(S.myTA||[]).concat([ref.id]);ssSet("myTA",S.myTA)}
+      S.cart=[];S.sheet=null;S.dine=null;
+      toast(S.customer?(fromTable?"ส่งออเดอร์กลับบ้านแล้ว ในชื่อ "+who.name+" ชำระเงินที่เคาน์เตอร์":"ส่งออเดอร์แล้ว รออาหารสักครู่"):"ส่งเข้าครัวแล้ว")},S.customer?"ส่งออเดอร์ไม่สำเร็จ กรุณาเรียกพนักงาน":null);
     S.busy=false;render();break}
   case "status":el.disabled=true;await guard(()=>updateDoc(dref("orders/"+el.dataset.id),{status:el.dataset.st}));break;
   case "arm":S.arm=el.dataset.k;render();break;
-  case "void":S.arm=null;await guard(()=>deleteDoc(dref("orders/"+el.dataset.id)));toast("ยกเลิกรายการแล้ว");break;
+  case "void":{S.arm=null;const vo=S.orders.find(x=>x.id===el.dataset.id);await guard(async()=>{const b=writeBatch(fs);b.delete(dref("orders/"+el.dataset.id));if(vo&&vo.table==="TA")b.delete(dref("contacts/"+el.dataset.id));await b.commit()});}toast("ยกเลิกรายการแล้ว");break;
   case "method":S.method=el.dataset.m;render();break;
   case "recv":S.form.received=el.dataset.v;render();break;
   case "pay":{const t=S.table;const tickets=ordersFor(t).map(o=>o.id);const lines=billLines(t);const c=calc(lines,S.form.discount);
-    const sale={table:t,tableLabel:tLabel(t),items:lines,subtotal:c.sub,discount:c.disc,service:c.svc,vat:c.vat,total:c.total,method:S.method,received:S.method==="cash"?(Number(S.form.received)||c.total):c.total,paidAt:Date.now(),date:today()};
+    const sale={table:t,tableLabel:ctxLabel(t),custName:t==="TA"&&S.ta?S.ta.name:"",custPhone:t==="TA"&&S.ta?S.ta.phone:"",items:lines,subtotal:c.sub,discount:c.disc,service:c.svc,vat:c.vat,total:c.total,method:S.method,received:S.method==="cash"?(Number(S.form.received)||c.total):c.total,paidAt:Date.now(),date:today()};
     S.busy=true;render();
-    await guard(async()=>{const b=writeBatch(fs);b.set(doc(col("sales")),sale);tickets.forEach(id=>b.delete(dref("orders/"+id)));await b.commit();S.receipt=sale;S.sheet="receipt"});
+    await guard(async()=>{const b=writeBatch(fs);b.set(doc(col("sales")),sale);tickets.forEach(id=>{b.delete(dref("orders/"+id));if(t==="TA")b.delete(dref("contacts/"+id))});await b.commit();S.receipt=sale;S.sheet="receipt"});
     S.busy=false;render();break}
   case "print":document.body.className="print-receipt";window.print();setTimeout(()=>{document.body.className=""},500);break;
   case "printQr":document.body.className="print-qr";window.print();setTimeout(()=>{document.body.className=""},500);break;
   case "dlQr":dlQr();break;
-  case "csv":dlCsv();break;
+  case "csvDay":salesCsv(S.sales.filter(x=>x.date===S.dayDate),"sales-"+S.dayDate+".csv");break;
+  case "csvMonth":{const [st,en]=monthRange(S.reportMonth);salesCsv(S.sales.filter(x=>x.date>=st&&x.date<=en),"sales-"+S.reportMonth+".csv");break}
+  case "month":{const [y,m]=S.reportMonth.split("-").map(Number);const d=new Date(y,m-1+(+el.dataset.d),1);const ym=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");if(ym>today().slice(0,7))return;S.reportMonth=ym;subSales();render();break}
+  case "day":S.dayDate=el.dataset.d;S.openBills={};S.sheet="day";render();break;
+  case "billToggle":S.openBills[el.dataset.id]=!S.openBills[el.dataset.id];render();break;
+  case "taStart":{const name=(S.form.taName||"").trim(),phone=(S.form.taPhone||"").replace(/[^\d+]/g,"");if(!name){toast("ใส่ชื่อลูกค้าก่อน");return}if(phone.replace(/\D/g,"").length<9){toast("ใส่เบอร์โทรให้ครบ");return}
+    S.ta={name,phone};S.form.taName="";S.form.taPhone="";S.cart=[];render();window.scrollTo(0,0);break}
+  case "taOpen":S.ta={name:el.dataset.n,phone:el.dataset.p};S.cart=[];render();window.scrollTo(0,0);break;
+  case "taBack":S.ta=null;S.cart=[];render();break;
+  case "custTA":{const name=(S.form.cName||"").trim().slice(0,60),phone=(S.form.cPhone||"").replace(/[^\d+]/g,"").slice(0,15);if(!name){toast("กรุณาใส่ชื่อ");return}if(phone.replace(/\D/g,"").length<9){toast("กรุณาใส่เบอร์โทรให้ครบ");return}
+    S.taCust={name,phone};ssSet("taCust",S.taCust);render();window.scrollTo(0,0);break}
+  case "custTAedit":S.form.cName=S.taCust?S.taCust.name:"";S.form.cPhone=S.taCust?S.taCust.phone:"";S.taCust=null;ssSet("taCust",null);S.cart=[];render();break;
+  case "itemMinus":{const o=S.orders.find(x=>x.id===el.dataset.id);if(!o)return;const idx=+el.dataset.i;const items=(o.items||[]).map(x=>Object.assign({},x));if(!items[idx]||items[idx].qty<=1)return;items[idx].qty--;
+    await guard(async()=>{await updateDoc(dref("orders/"+o.id),{items});toast("ลดจำนวนแล้ว")});break}
+  case "itemDel":{S.arm=null;const o=S.orders.find(x=>x.id===el.dataset.id);if(!o)return;const idx=+el.dataset.i;const items=(o.items||[]).filter((_,k)=>k!==idx);
+    const sm=servedMap(o);const ns={};(o.items||[]).forEach((_,k)=>{if(k<idx&&sm[k])ns[k]=true;if(k>idx&&sm[k])ns[k-1]=true});
+    await guard(async()=>{if(!items.length){const b=writeBatch(fs);b.delete(dref("orders/"+o.id));if(o.table==="TA")b.delete(dref("contacts/"+o.id));await b.commit()}
+      else{const upd={items,served:ns};if(o.status==="cooking"&&items.every((_,k)=>ns[k]))upd.status="served";await updateDoc(dref("orders/"+o.id),upd)}toast("ยกเลิกรายการแล้ว")});render();break}
+  case "itemSauce":{const o=S.orders.find(x=>x.id===el.dataset.id);if(!o)return;const idx=+el.dataset.i;const it=(o.items||[])[idx];if(!it)return;S.optEdit={oid:o.id,idx};S.optFor=it.mid;S.optPick=it.opt||null;S.sheet="opt";render();break}
+  case "saveOpt":{const ed=S.optEdit;const o=ed&&S.orders.find(x=>x.id===ed.oid);if(!o||!S.optPick)return;const items=(o.items||[]).map(x=>Object.assign({},x));if(!items[ed.idx])return;items[ed.idx].opt=S.optPick;
+    await guard(async()=>{await updateDoc(dref("orders/"+o.id),{items});S.sheet=null;S.optEdit=null;toast("เปลี่ยนซอสแล้ว")});render();break}
   case "sound":S.sound=!S.sound;if(S.sound)beep();render();break;
   case "seed":{S.busy=true;render();await guard(async()=>{const b=writeBatch(fs);SEED_MENU.forEach(([cat,name,price],i)=>b.set(doc(col("menu")),{cat,name,price,available:true,sort:i+1}));await b.commit();toast("นำเข้าเมนูแล้ว")});S.busy=false;render();break}
   case "saveMenu":{const f=S.form;const name=(f.mName||"").trim();const price=Number(f.mPrice);
@@ -640,7 +767,7 @@ document.addEventListener("click",async e=>{
   case "avail":{const m=menuById(el.dataset.id);if(!m)return;await guard(()=>updateDoc(dref("menu/"+m.id),{available:m.available===false}));break}
   case "delMenu":S.arm=null;await guard(()=>deleteDoc(dref("menu/"+el.dataset.id)));toast("ลบเมนูแล้ว");break;
   case "saveSetup":{const f=S.form;const data={shopName:(f.sName||"").trim()||"ร้านของฉัน",promptpay:(f.sPp||"").replace(/\D/g,""),service:Math.max(0,Number(f.sSvc)||0),vat:Math.max(0,Number(f.sVat)||0),tables:Math.max(1,Math.min(60,parseInt(f.sTables)||10)),custMinutes:Math.max(0,Math.min(240,parseInt(f.sCust)||0)),lateMinutes:Math.max(1,Math.min(120,parseInt(f.sLate)||10)),
-      sauce:{cat:(f.oCat||"").trim(),title:(f.oTitle||"").trim()||"เลือกซอส",v2:true,choices:String(f.oChoices||"").split(/\n|,/).map(x=>x.trim()).filter(Boolean).slice(0,30)}};
+      seedDrinks:!!S.config.seedDrinks,sauce:{cat:(f.oCat||"").trim(),title:(f.oTitle||"").trim()||"เลือกซอส",v2:true,choices:String(f.oChoices||"").split(/\n|,/).map(x=>x.trim()).filter(Boolean).slice(0,30)}};
     await guard(async()=>{await setDoc(dref("config/main"),data);toast("บันทึกการตั้งค่าแล้ว")});break}
   }
 });
@@ -656,7 +783,6 @@ document.addEventListener("change",async e=>{const el=e.target;if(el.id!=="mFile
   S.imgBusy=false;render()});
 document.addEventListener("input",e=>{const el=e.target;const k=el.dataset&&el.dataset.f;if(!k)return;
   if(k.startsWith("note:")){const i=+k.slice(5);if(S.cart[i])S.cart[i].note=el.value;return}
-  if(k==="reportDate"){if(el.value){S.reportDate=el.value;subSales();render()}return}
   if(el.type==="checkbox"){S.form[k]=el.checked;return}
   S.form[k]=el.value;
   if(k==="discount"||k==="received"||k==="sPp"||k==="mCat")render()});
@@ -666,13 +792,13 @@ function downloadFile(name,data,type){const blob=new Blob([data],{type});const u
 function dlQr(){const cells=[...document.querySelectorAll(".tqr [data-qr]")].map(el=>{const c=el.querySelector("canvas");const img=el.querySelector("img");const src=c?c.toDataURL("image/png"):(img?img.src:"");return '<div class="c"><img src="'+src+'"><h2>'+esc(tLabel(el.dataset.t))+"</h2><p>สแกนเพื่อสั่งอาหาร</p></div>"}).join("");
   const html='<!doctype html><html lang="th"><head><meta charset="utf-8"><title>QR โต๊ะ '+esc(S.config.shopName)+'</title><style>body{font-family:sans-serif;margin:16px}.g{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.c{border:1px solid #ccc;border-radius:12px;padding:16px;text-align:center;break-inside:avoid}.c img{width:100%;max-width:220px}h2{margin:8px 0 0}p{margin:4px 0 0;color:#555}</style></head><body><h1>'+esc(S.config.shopName)+'</h1><div class="g">'+cells+"</div></body></html>";
   downloadFile("qr-tables.html",html,"text/html")}
-function dlCsv(){const d=S.reportDate;const rows=[["เวลา","โต๊ะ","รายการ","รวม","ส่วนลด","เซอร์วิส","VAT","ยอดชำระ","วิธีชำระ"]];
-  S.sales.filter(s=>s.date===d).sort((a,b)=>a.paidAt-b.paidAt).forEach(s=>rows.push([hm(s.paidAt),s.tableLabel,(s.items||[]).map(i=>i.qty+"x "+i.name).join("; "),s.subtotal,s.discount||0,s.service||0,s.vat||0,s.total,s.method==="promptpay"?"พร้อมเพย์":"เงินสด"]));
-  downloadFile("sales-"+d+".csv","\ufeff"+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n"),"text/csv")}
+function salesCsv(list,name){const rows=[["วันที่","เวลา","โต๊ะ/ลูกค้า","เบอร์โทร","รายการ","รวม","ส่วนลด","เซอร์วิส","VAT","ยอดชำระ","วิธีชำระ"]];
+  list.slice().sort((a,b)=>a.paidAt-b.paidAt).forEach(x=>rows.push([x.date,hm(x.paidAt),x.tableLabel,x.custPhone||"",(x.items||[]).map(i=>i.qty+"x "+i.name+(i.opt?" ("+i.opt+")":"")).join("; "),x.subtotal,x.discount||0,x.service||0,x.vat||0,x.total,x.method==="promptpay"?"พร้อมเพย์":"เงินสด"]));
+  downloadFile(name,"\ufeff"+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n"),"text/csv")}
 
 /* ---------- subscriptions ---------- */
-function subSales(){if(!isStaff())return;const from=addDays(S.reportDate,-6);if(S.salesFor===from)return;if(S.salesUnsub)S.salesUnsub();S.salesFor=from;
-  S.salesUnsub=onSnapshot(query(col("sales"),where("date",">=",from)),snap=>{S.sales=snap.docs.map(d=>Object.assign({id:d.id},d.data()));if(S.view==="report")render()},err=>console.error(err))}
+function subSales(){if(!isStaff())return;const [st,en]=monthRange(S.reportMonth);if(S.salesFor===st)return;if(S.salesUnsub)S.salesUnsub();S.salesFor=st;S.sales=[];
+  S.salesUnsub=onSnapshot(query(col("sales"),where("date",">=",st),where("date","<=",en)),snap=>{S.sales=snap.docs.map(d=>Object.assign({id:d.id},d.data()));if(S.view==="report")render()},err=>console.error(err))}
 function subOrders(){
   const key=isStaff()&&!S.customer?"all":(S.customer?"t:"+S.customer:null);
   if(key===S.ordersKey)return;
@@ -687,7 +813,12 @@ function subOrders(){
 
 onSnapshot(dref("config/main"),s=>{S.config=Object.assign({},DEF,s.exists()?s.data():{});S.got.c=true;render()},err=>{console.error(err);S.got.c=true;render()});
 onSnapshot(col("menu"),s=>{S.menu=s.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(a.sort||0)-(b.sort||0));S.got.m=true;render()},err=>{console.error(err);S.got.m=true;render()});
-onAuthStateChanged(auth,u=>{S.user=u;S.authReady=true;
+function subContacts(on){if(S.contactsUnsub){S.contactsUnsub();S.contactsUnsub=null}S.contacts={};if(!on)return;
+  S.contactsUnsub=onSnapshot(col("contacts"),s=>{const m={};s.docs.forEach(d=>m[d.id]=d.data());S.contacts=m;render()},err=>console.error(err))}
+async function ensureDrinks(){if(S.drinksTried||!isStaff()||!S.got.c||!S.got.m||!S.menu.length||S.config.seedDrinks)return;S.drinksTried=true;
+  try{const b=writeBatch(fs);DRINKS.forEach(([id,name,price],i)=>b.set(dref("menu/"+id),{cat:"เครื่องดื่ม",name,price,available:true,sort:100000+i}));b.set(dref("config/main"),{seedDrinks:true},{merge:true});await b.commit();toast("เพิ่มหมวดเครื่องดื่มแล้ว")}catch(e){console.error(e)}}
+setInterval(ensureDrinks,2000);
+onAuthStateChanged(auth,u=>{S.user=u;S.authReady=true;subContacts(!!u);
   if(!u&&S.salesUnsub){S.salesUnsub();S.salesUnsub=null;S.salesFor=null;S.sales=[]}
   subOrders();if(u&&S.view==="report")subSales();render()});
 
