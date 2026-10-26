@@ -383,6 +383,17 @@ nav.tabs{background:var(--fill);border-radius:12px;padding:3px;gap:2px;margin-bo
 .numpad button.fn{font-size:17px;color:var(--muted)}
 .numpad button.ok{background:var(--accent);color:#fff;font-size:18px}
 .numpad button:active{transform:scale(.96)}
+
+.langfab{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:14px;z-index:15;padding:8px 14px;border-radius:999px;font-weight:700;font-size:15px;color:var(--ink);background:color-mix(in srgb,var(--surface) 85%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.cust-hero{padding-right:110px}
+.offtag{display:inline-block;font-size:13px;font-weight:700;padding:2px 8px;border-radius:8px;background:var(--chili-soft);color:var(--chili)}
+.item.off .iprice::after{content:none}
+.stseg{display:inline-flex;background:var(--fill);border-radius:10px;padding:2px;gap:2px;flex:none}
+.stseg button{padding:6px 10px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);min-height:34px;white-space:nowrap}
+.stseg button[aria-pressed="true"].st-on{background:var(--basil);color:#fff}
+.stseg button[aria-pressed="true"].st-sold{background:var(--chili);color:#fff}
+.stseg button[aria-pressed="true"].st-pause{background:var(--ink);color:var(--surface)}
+@media (max-width:520px){.lrow{flex-wrap:wrap}.stseg{order:5;width:100%}.stseg button{flex:1}}
 </style>
 </head>
 <body>
@@ -416,6 +427,8 @@ const SEED_MENU = [
  ["ซอส / เพิ่มพิเศษ","ซอสมัสตาร์ด",15],["ซอส / เพิ่มพิเศษ","ซอสไวน์แดง",15],["ซอส / เพิ่มพิเศษ","ซอสพริกไทยดำ",15],["ซอส / เพิ่มพิเศษ","มายองเนส",15],["ซอส / เพิ่มพิเศษ","ไส้กรอกเพิ่ม",15]
 ];
 
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 function ssGet(k,d){try{const v=sessionStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 function ssSet(k,v){try{sessionStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 const NEW_MENU=[
@@ -434,8 +447,11 @@ const NEW_MENU=[
  {cat:"จานเดียว / ทานเล่น",name:"เฟรนช์ฟรายส์",price:60,priceTA:60},{cat:"จานเดียว / ทานเล่น",name:"ขนมปังกระเทียม",price:35,priceTA:35},{cat:"จานเดียว / ทานเล่น",name:"นักเก็ตไก่",price:60,priceTA:60},
  {cat:"เพิ่มพิเศษในสเต็ก",name:"ไข่ดาว",price:10,priceTA:10},{cat:"เพิ่มพิเศษในสเต็ก",name:"ไส้กรอก",price:12,priceTA:12},{cat:"เพิ่มพิเศษในสเต็ก",name:"แฮม",price:5,priceTA:5}
 ];
+const EN_MAP={"สเต็กหมู": "Pork Steak", "สเต็กไก่": "Chicken Steak", "สเต็กเนื้อสัน": "Beef Steak", "สเต็กไก่บรั่นดีซอส": "Chicken Steak with Brandy Sauce", "ไส้กรอกเยอรมันรวม": "Mixed German Sausage", "พอร์คชอป": "Pork Chop", "สเต็กปลาดอรี่": "Dory Fish Steak", "สโม๊คแฮม": "Smoked Ham", "หมูชุบเกล็ดขนมปัง": "Batter-Fried Pork", "ไก่ชุบเกล็ดขนมปัง": "Batter-Fried Chicken", "ปลาดอรี่ชุบเกล็ดขนมปัง": "Batter-Fried Dory Fish", "เซต 1 สเต็กหมู + หมูชุบเกล็ดขนมปัง": "Set 1: Pork Steak + Batter-Fried Pork", "เซต 2 สเต็กไก่ + ไก่ชุบเกล็ดขนมปัง": "Set 2: Chicken Steak + Batter-Fried Chicken", "เซต 3 สเต็กหมู + ปลาดอรี่ชุบเกล็ดขนมปัง": "Set 3: Pork Steak + Batter-Fried Dory", "เซต 4 สเต็กไก่ + ปลาดอรี่ชุบเกล็ดขนมปัง": "Set 4: Chicken Steak + Batter-Fried Dory", "เซต 5 สเต็กปลาดอรี่ + หมูชุบเกล็ดขนมปัง": "Set 5: Dory Fish Steak + Batter-Fried Pork", "เซต 6 สเต็กปลาดอรี่ + ไก่ชุบเกล็ดขนมปัง": "Set 6: Dory Fish Steak + Batter-Fried Chicken", "สลัดผักรวมมิตร": "Mixed Vegetable Salad", "ทูน่าสลัด": "Tuna Salad", "เชฟสลัด": "Chef Salad", "สลัดหมู": "Pork Salad", "สลัดไก่": "Chicken Salad", "สปาเก็ตตี้คาโบนาร่า": "Spaghetti Carbonara", "สปาเก็ตตี้ซอสหมู": "Spaghetti with Pork Sauce", "สปาเก็ตตี้ซอสไก่": "Spaghetti with Chicken Sauce", "สปาเก็ตตี้คาเรตเทียร่าหมู": "Spaghetti Carrettiera with Pork", "สปาเก็ตตี้คาเรตเทียร่าไก่": "Spaghetti Carrettiera with Chicken", "ข้าวผัดอเมริกัน": "American Fried Rice", "ขนมปัง ไข่ดาว แฮม ไส้กรอก": "Fried Egg, Ham, Sausage & Toast", "เฟรนช์ฟรายส์": "French Fries", "ขนมปังกระเทียม": "Garlic Bread", "นักเก็ตไก่": "Chicken Nuggets", "ไข่ดาว": "Fried Egg", "ไส้กรอก": "Sausage", "แฮม": "Ham", "โค้ก": "Coke", "แฟนต้าน้ำเขียว": "Fanta Green (Cream Soda)", "แฟนต้าน้ำแดง": "Fanta Red (Strawberry)", "แฟนต้าน้ำส้ม": "Fanta Orange", "สไปรท์": "Sprite", "น้ำเปล่า": "Drinking Water", "น้ำแข็ง 1 แก้ว": "Glass of Ice"};
+const CAT_EN={"สเต็ก":"Steaks","สเต็กเซต":"Steak Sets","สลัด":"Salads","สปาเก็ตตี้":"Spaghetti","จานเดียว / ทานเล่น":"Rice Dishes & Snacks","เพิ่มพิเศษในสเต็ก":"Steak Add-ons","เครื่องดื่ม":"Drinks","อื่น ๆ":"Others"};
+const SAUCE_EN={"ซอสพริกไทยดำ":"Black Pepper Sauce","ซอสไวน์แดง":"Red Wine Sauce","ซอสไวน์องุ่น":"Grape Wine Sauce","ซอสเกรวี่":"Gravy","ซอสเปรี้ยวมะเขือเทศ":"Sour Tomato Sauce","ซอสเห็ด":"Mushroom Sauce","ซอสมัสตาร์ด":"Mustard Sauce","มายองเนส":"Mayonnaise","เลือกซอสราด":"Choose your sauce"};
 const ALIAS={"พอร์คช๊อป":"พอร์คชอป","สเต็กปลาดอร์ลี่":"สเต็กปลาดอรี่","ปลาดอร์ลี่ชุบเกล็ดขนมปัง":"ปลาดอรี่ชุบเกล็ดขนมปัง","นักเก็ตไก่ 7 ชิ้น + เฟรนช์ฟรายส์":"นักเก็ตไก่","ขนมปังกระเทียม 6 ชิ้น":"ขนมปังกระเทียม","สปาเก็ตตี้คาเรตเทียร่า หมู (ใส่ทูน่า)":"สปาเก็ตตี้คาเรตเทียร่าหมู","สปาเก็ตตี้คาเรตเทียร่า ไก่ (ใส่ทูน่า)":"สปาเก็ตตี้คาเรตเทียร่าไก่"};
-function menuDoc(n,i){const d={cat:n.cat,name:n.name,noOpt:!!n.noOpt,sort:i+1};
+function menuDoc(n,i){const d={cat:n.cat,name:n.name,nameEn:EN_MAP[n.name]||"",noOpt:!!n.noOpt,sort:i+1};
   if(n.v)Object.assign(d,{var:true,pMin:n.v[0],pMax:n.v[1],pMinTA:n.v[2],pMaxTA:n.v[3],price:n.v[0],priceTA:n.v[2]});
   else Object.assign(d,{var:false,price:n.price,priceTA:n.priceTA,pMin:null,pMax:null,pMinTA:null,pMaxTA:null});return d}
 const DRINKS=[["d01","โค้ก",13],["d02","แฟนต้าน้ำเขียว",13],["d03","แฟนต้าน้ำแดง",13],["d04","แฟนต้าน้ำส้ม",13],["d05","สไปรท์",13],["d06","น้ำเปล่า",10],["d07","น้ำแข็ง 1 แก้ว",2]];
@@ -449,7 +465,7 @@ const S={user:null,authReady:false,config:Object.assign({},DEF),menu:[],orders:[
   view:"pos",customer:null,table:null,cart:[],cat:null,sheet:null,form:{},reportDate:today(),sound:false,
   editId:null,arm:null,method:"cash",receipt:null,setupLoaded:false,salesUnsub:null,salesFor:null,ordersUnsub:null,ordersKey:null,firstOrders:true,
   got:{c:false,m:false},loginErr:"",busy:false,optFor:null,optPick:null,custStart:Date.now(),
-  ta:null,taCust:ssGet("taCust",null),myTA:ssGet("myTA",[]),contacts:{},contactsUnsub:null,reportMonth:today().slice(0,7),dayDate:null,openBills:{},optEdit:null,drinksTried:false,dine:null};
+  ta:null,taCust:ssGet("taCust",null),myTA:ssGet("myTA",[]),contacts:{},contactsUnsub:null,reportMonth:today().slice(0,7),dayDate:null,openBills:{},optEdit:null,drinksTried:false,dine:null,lang:lsGet("lang","th")};
 const app=document.getElementById("app");
 
 /* ---------- helpers ---------- */
@@ -459,13 +475,13 @@ function addDays(ds,n){const d=new Date(ds+"T12:00:00");d.setDate(d.getDate()+n)
 function baht(n){n=Math.round((Number(n)||0)*100)/100;return "฿"+n.toLocaleString("th-TH",{minimumFractionDigits:Number.isInteger(n)?0:2,maximumFractionDigits:2})}
 function hm(ms){return new Date(ms).toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"})}
 function tableIds(){const n=Math.max(1,Math.min(60,parseInt(S.config.tables)||10));const a=[];for(let i=1;i<=n;i++)a.push(String(i));a.push("TA");return a}
-function tLabel(t){return t==="TA"?"กลับบ้าน":"โต๊ะ "+t}
+function tLabel(t){return t==="TA"?L("กลับบ้าน","Takeaway"):L("โต๊ะ ","Table ")+t}
 function contactOf(o){return S.contacts[o.id]||null}
 function taKey(o){const c=contactOf(o);return c?(c.phone||c.name||""):""}
 function ordersFor(t){let os=S.orders.filter(o=>o.table===t);
   if(t==="TA"){if(S.customer==="TA"){const mine=S.myTA||[];os=os.filter(o=>mine.includes(o.id))}else if(S.table==="TA"&&S.ta){os=os.filter(o=>taKey(o)===S.ta.phone)}}
   return os}
-function ctxLabel(t){if(t==="TA"){const c=S.customer==="TA"?S.taCust:S.ta;if(c)return "กลับบ้าน: "+c.name}return tLabel(t)}
+function ctxLabel(t){if(t==="TA"){const c=S.customer==="TA"?S.taCust:S.ta;if(c)return L("กลับบ้าน: ","Takeaway: ")+c.name}return tLabel(t)}
 function orderLabel(o){if(o.table==="TA"){const c=contactOf(o);if(c)return "กลับบ้าน: "+c.name+(c.fromTable?" (สั่งจากโต๊ะ "+c.fromTable+")":"")}return tLabel(o.table)}
 function short(id){return "#"+String(id).slice(-4).toUpperCase()}
 let toastTimer;
@@ -473,6 +489,13 @@ function toast(msg){let el=document.getElementById("toast");if(!el){el=document.
 function categories(){const seen=[];S.menu.forEach(m=>{const c=m.cat||"อื่น ๆ";if(!seen.includes(c))seen.push(c)});return seen}
 function menuById(id){return S.menu.find(m=>m.id===id)}
 /* customer-sent items are priced from the current menu, never from what the phone sent */
+function isEN(){return !!S.customer&&S.lang==="en"}
+function L(th,en){return isEN()?en:th}
+function trName(m,fallback){if(!m)return fallback||"";return isEN()?(m.nameEn||EN_MAP[m.name]||m.name):m.name}
+function trCat(c){return isEN()?(CAT_EN[c]||c):c}
+function trOpt(o){return isEN()?(SAUCE_EN[o]||o):o}
+/* sold-out resets by itself each day; paused stays until staff re-opens */
+function menuState(m){if(!m)return "on";if(m.off==="pause")return "pause";if(m.off==="sold"&&m.offDate===today())return "sold";return "on"}
 function isVar(m){return !!(m&&m.var)}
 function mPrice(m,ta){if(!m)return 0;if(ta&&m.priceTA!=null&&m.priceTA!=="")return Number(m.priceTA)||0;return Number(m.price)||0}
 function rangeTxt(m,ta){if(!m)return "";const a=ta&&m.pMinTA!=null?m.pMinTA:m.pMin,b=ta&&m.pMaxTA!=null?m.pMaxTA:m.pMax;return "฿"+a+"–"+b}
@@ -517,7 +540,7 @@ function optGroupFor(m){const g=sauceCfg();if(!m||!g.choices.length||!g.cats.inc
   const name=String(m.name||"");const ch=g.choices.map(parseChoice).filter(c=>c.label&&(!c.kw||name.includes(c.kw)));
   return ch.length?{title:g.title,choices:ch}:null}
 function imgFor(m){return m&&(m.img||IMG_MAP[m.name])||""}
-function optHtml(it,cls){return it&&it.opt?'<span class="'+(cls||"kopt")+'">• '+esc(it.opt)+"</span>":""}
+function optHtml(it,cls){return it&&it.opt?'<span class="'+(cls||"kopt")+'">• '+esc(trOpt(it.opt))+"</span>":""}
 
 /* PromptPay (EMVCo) */
 function crc16(s){let c=0xFFFF;for(let i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(let j=0;j<8;j++){c=(c&0x8000)?((c<<1)^0x1021):(c<<1);c&=0xFFFF}}return c.toString(16).toUpperCase().padStart(4,"0")}
@@ -556,7 +579,9 @@ function render(){
   else if(S.customer){html=viewCustomer()}
   else if(!isStaff()){html=viewLogin()}
   else{html=topbar()+'<main class="wrap">'+({pos:S.table?viewTable:viewPos,kitchen:viewKitchen,menu:viewMenu,report:viewReport,setup:viewSetup}[S.view])()+"</main>"}
+  if(S.customer&&ready)html+='<button class="langfab" data-a="lang" aria-label="'+(S.lang==="en"?"เปลี่ยนเป็นภาษาไทย":"Switch to English")+'">'+(S.lang==="en"?"🇹🇭 ไทย":"🇬🇧 EN")+"</button>";
   html+=sheetHtml();
+  document.documentElement.lang=isEN()?"en":"th";
   app.innerHTML=html;
   document.body.style.overflow=S.sheet?"hidden":"";
   if(fid){const el=document.getElementById(fid);if(el){el.focus({preventScroll:true});try{if(ss!=null)el.setSelectionRange(ss,se)}catch(e){}}}
@@ -598,26 +623,26 @@ function viewPos(){
 
 function menuPicker(){
   const cats=categories();if(S.cat&&!cats.includes(S.cat))S.cat=null;
-  if(!S.menu.length)return '<div class="empty">ยังไม่มีเมนู</div>';
+  if(!S.menu.length)return '<div class="empty">'+L("ยังไม่มีเมนู","No menu yet")+"</div>";
   const anyImg=S.menu.some(x=>imgFor(x));
-  const card=m=>{const q=S.cart.filter(l=>l.mid===m.id).reduce((s,l)=>s+l.qty,0);const off=m.available===false;const im=imgFor(m);
+  const card=m=>{const q=S.cart.filter(l=>l.mid===m.id).reduce((s,l)=>s+l.qty,0);const st=menuState(m);const off=st!=="on";const im=imgFor(m);
      const ta=taCtx();const pTA=!ta&&!isVar(m)&&m.priceTA!=null&&m.priceTA!==""&&Number(m.priceTA)!==Number(m.price);
-     const inner='<span class="iname">'+esc(m.name)+(optGroupFor(m)?'<span class="tag">เลือกซอส</span>':"")+'</span><span class="iprice">'+priceTxt(m,ta)+(isVar(m)?'<small class="pnote">ราคาตามน้ำหนัก</small>':"")+(pTA?'<small class="pnote">กลับบ้าน '+baht(m.priceTA)+"</small>":"")+"</span>";
+     const inner='<span class="iname">'+esc(trName(m))+(optGroupFor(m)&&!off?'<span class="tag">'+L("เลือกซอส","Choose sauce")+"</span>":"")+'</span><span class="iprice">'+(off?'<span class="offtag">'+(st==="sold"?L("หมดแล้ว","Sold out"):L("ปิดชั่วคราว","Unavailable"))+"</span>":priceTxt(m,ta)+(isVar(m)?'<small class="pnote">'+L("ราคาตามน้ำหนัก","Price by weight")+"</small>":"")+(pTA?'<small class="pnote">'+L("กลับบ้าน ","Takeaway ")+baht(m.priceTA)+"</small>":""))+"</span>";
      return '<button class="item'+(off?" off":"")+(anyImg?" hasimg":"")+'" data-a="add" data-id="'+esc(m.id)+'"'+(off?" disabled":"")+'>'+(anyImg?'<span class="ithumb">'+(im?'<img src="'+esc(im)+'" alt="" loading="lazy" onerror="this.remove()">':'<span class="ph">🍽️</span>')+'</span><span class="ibody">'+inner+"</span>":inner)+(q?'<span class="iqty">'+q+"</span>":"")+"</button>"};
   const inCat=c=>S.menu.filter(m=>(m.cat||"อื่น ๆ")===c);
   const body=S.cat?'<div class="items">'+inCat(S.cat).map(card).join("")+"</div>":
-    cats.map(c=>{const l=inCat(c);return '<h3 class="catttl">'+esc(c)+"<small>"+l.length+" รายการ</small></h3><div class=\"items\">"+l.map(card).join("")+"</div>"}).join("");
-  return '<div class="chips" role="group" aria-label="หมวดหมู่"><button class="chip" data-a="cat" data-c="" aria-pressed="'+(!S.cat)+'">ทั้งหมด</button>'+
-   cats.map(c=>'<button class="chip" data-a="cat" data-c="'+esc(c)+'" aria-pressed="'+(S.cat===c)+'">'+esc(c)+"</button>").join("")+"</div>"+body+
-   (S.cart.length?'<div class="bar"><button class="btn" data-a="sheet" data-s="cart"><span>ตะกร้า '+cartCount()+' รายการ</span><span>'+baht(cartTotal())+(cartHasVar()?"+":"")+"</span></button></div>":"")}
+    cats.map(c=>{const l=inCat(c);return '<h3 class="catttl">'+esc(trCat(c))+"<small>"+l.length+L(" รายการ"," items")+"</small></h3><div class=\"items\">"+l.map(card).join("")+"</div>"}).join("");
+  return '<div class="chips" role="group" aria-label="หมวดหมู่"><button class="chip" data-a="cat" data-c="" aria-pressed="'+(!S.cat)+'">'+L("ทั้งหมด","All")+"</button>"+
+   cats.map(c=>'<button class="chip" data-a="cat" data-c="'+esc(c)+'" aria-pressed="'+(S.cat===c)+'">'+esc(trCat(c))+"</button>").join("")+"</div>"+body+
+   (S.cart.length?'<div class="bar"><button class="btn" data-a="sheet" data-s="cart"><span>'+L("ตะกร้า "+cartCount()+" รายการ","Cart: "+cartCount()+(cartCount()>1?" items":" item"))+'</span><span>'+baht(cartTotal())+(cartHasVar()?"+":"")+"</span></button></div>":"")}
 
 function sentList(t,staff){
   const os=ordersFor(t);if(!os.length)return "";
-  const stTxt={new:"รอครัว",cooking:"กำลังทำ",served:"เสิร์ฟแล้ว"};
-  return '<h2 class="section-title">สั่งแล้ว</h2><div class="sent">'+os.map(o=>{const items=o.items||[];
-   return '<div class="ticket-mini"><div class="row between"><span class="muted small">'+hm(o.createdAt)+(o.source==="customer"?" ลูกค้าสั่งเอง":"")+'</span><span class="status st-'+esc(o.status)+'">'+(o.status==="cooking"&&servedCount(o)&&items.length>1?"เสิร์ฟแล้ว "+servedCount(o)+"/"+items.length:(stTxt[o.status]||""))+"</span></div>"+
+  const stTxt={new:L("รอครัว","Waiting"),cooking:L("กำลังทำ","Cooking"),served:L("เสิร์ฟแล้ว","Served")};
+  return '<h2 class="section-title">'+L("สั่งแล้ว","Your orders")+'</h2><div class="sent">'+os.map(o=>{const items=o.items||[];
+   return '<div class="ticket-mini"><div class="row between"><span class="muted small">'+hm(o.createdAt)+(o.source==="customer"&&!isEN()?" ลูกค้าสั่งเอง":"")+'</span><span class="status st-'+esc(o.status)+'">'+(o.status==="cooking"&&servedCount(o)&&items.length>1?L("เสิร์ฟแล้ว ","Served ")+servedCount(o)+"/"+items.length:(stTxt[o.status]||""))+"</span></div>"+
    items.map((i,idx)=>{const m=menuById(i.mid);const q=parseInt(i.qty)||0;const k=o.id+":"+idx;
-     const txt=q+"× "+esc(lineName(o,i))+(i.opt?' <span style="color:var(--basil);font-weight:600">• '+esc(i.opt)+"</span>":"")+(i.note?' <span class="muted small">('+esc(i.note)+")</span>":"")+(i.ta&&o.table!=="TA"?' <span class="tatag">🛍️ กลับบ้าน</span>':"")+(o.status!=="served"&&servedMap(o)[idx]?' <span class="sdone">✓ เสิร์ฟแล้ว</span>':"")+'<span class="iprice2">'+(linePrice(o,i)==null?rangeTxt(m,o.table==="TA"||!!i.ta):baht(linePrice(o,i)*q))+"</span>";
+     const txt=q+"× "+esc(isEN()?trName(m,lineName(o,i)):lineName(o,i))+(i.opt?' <span style="color:var(--basil);font-weight:600">• '+esc(trOpt(i.opt))+"</span>":"")+(i.note?' <span class="muted small">('+esc(i.note)+")</span>":"")+(i.ta&&o.table!=="TA"?' <span class="tatag">🛍️ '+L("กลับบ้าน","Takeaway")+"</span>":"")+(o.status!=="served"&&servedMap(o)[idx]?' <span class="sdone">✓ '+L("เสิร์ฟแล้ว","Served")+"</span>":"")+'<span class="iprice2">'+(linePrice(o,i)==null?rangeTxt(m,o.table==="TA"||!!i.ta):baht(linePrice(o,i)*q))+"</span>";
      if(!staff)return '<div class="irow"><span class="itext">'+txt+"</span></div>";
      const acts=(o.table!=="TA"?'<button class="btn ghost" data-a="itemTA" data-id="'+o.id+'" data-i="'+idx+'">'+(i.ta?"🍽️ ทานที่ร้าน":"🛍️ กลับบ้าน")+"</button>":"")+(m&&optGroupFor(m)?'<button class="btn ghost" data-a="itemSauce" data-id="'+o.id+'" data-i="'+idx+'">เปลี่ยนซอส</button>':"")+
        (q>1?'<button class="btn ghost" data-a="itemMinus" data-id="'+o.id+'" data-i="'+idx+'">−1</button>':"")+
@@ -645,15 +670,16 @@ function viewTable(){
 /* customer */
 function viewCustomer(){
   const t=S.customer;const valid=t==="TA"||tableIds().includes(t);
-  if(!valid)return '<div class="wrap"><div class="panel empty">ไม่พบโต๊ะนี้ กรุณาแจ้งพนักงาน</div></div>';
-  if(t==="TA"&&!S.taCust&&custLeft()>0){const f=S.form;return '<div class="cust-hero"><p class="muted" style="margin:0">'+esc(S.config.shopName)+'</p><h1>สั่งกลับบ้าน</h1></div><main class="wrap"><div class="panel login" style="margin-top:8px"><p style="margin-top:0">กรุณากรอกชื่อและเบอร์โทร เพื่อให้ร้านเรียกเมื่ออาหารพร้อม</p>'+
-    '<div class="field"><label for="cName">ชื่อ</label><input id="cName" data-f="cName" autocomplete="name" value="'+esc(f.cName||"")+'"></div><div class="field"><label for="cPhone">เบอร์โทร</label><input id="cPhone" data-f="cPhone" type="tel" inputmode="tel" autocomplete="tel" value="'+esc(f.cPhone||"")+'"></div><button class="btn block" data-a="custTA">ถัดไป เลือกเมนู</button></div></main>'}
+  if(!valid)return '<div class="wrap"><div class="panel empty">'+L("ไม่พบโต๊ะนี้ กรุณาแจ้งพนักงาน","Table not found. Please ask our staff.")+"</div></div>";
+  if(t==="TA"&&!S.taCust&&custLeft()>0){const f=S.form;return '<div class="cust-hero"><p class="muted" style="margin:0">'+esc(S.config.shopName)+"</p><h1>"+L("สั่งกลับบ้าน","Takeaway order")+'</h1></div><main class="wrap"><div class="panel login" style="margin-top:8px"><p style="margin-top:0">'+L("กรุณากรอกชื่อและเบอร์โทร เพื่อให้ร้านเรียกเมื่ออาหารพร้อม","Please enter your name and phone number so we can call you when your food is ready.")+"</p>"+
+    '<div class="field"><label for="cName">'+L("ชื่อ","Name")+'</label><input id="cName" data-f="cName" autocomplete="name" value="'+esc(f.cName||"")+'"></div><div class="field"><label for="cPhone">'+L("เบอร์โทร","Phone number")+'</label><input id="cPhone" data-f="cPhone" type="tel" inputmode="tel" autocomplete="tel" value="'+esc(f.cPhone||"")+'"></div><button class="btn block" data-a="custTA">'+L("ถัดไป เลือกเมนู","Next: choose dishes")+"</button></div></main>"}
   const total=calc(billLines(t),0).sub;
   const left=custLeft();const exp=left<=0;
-  const hero='<div class="cust-hero"><p class="muted" style="margin:0">'+esc(S.config.shopName)+'</p><h1>'+esc(ctxLabel(t))+'</h1>'+(t==="TA"&&S.taCust?'<p class="muted small" style="margin:2px 0 0">📞 '+esc(S.taCust.phone)+' <button class="btn ghost small" style="min-height:30px;padding:2px 10px" data-a="custTAedit">แก้ไข</button></p>':"")+(exp?"":'<p class="muted small" style="margin:4px 0 0">เลือกเมนูแล้วกดส่งออเดอร์ อาหารจะส่งเข้าครัวทันที</p>'+(left!==Infinity?'<span class="ctimer'+(left<60000?" low":"")+'" role="timer">⏱ เหลือเวลาสั่ง <span id="ctime">'+mmss(left)+"</span></span>":""))+"</div>";
-  if(exp)return hero+'<main class="wrap"><div class="panel expired"><div class="big">⏱</div><h2>หมดเวลาสั่งอาหาร</h2><p class="muted">ถ้าต้องการสั่งเพิ่ม กรุณาสแกน QR ที่โต๊ะอีกครั้ง</p></div>'+sentList(t,false)+(total?'<div class="panel row between"><span>ยอดรวมตอนนี้</span><span class="grand">'+baht(total)+"</span></div>":"")+"</main>";
-  return hero+'<main class="wrap">'+
-   menuPicker()+sentList(t,false)+(total?'<div class="panel row between"><span>ยอดรวมตอนนี้</span><span class="grand">'+baht(total)+'</span></div><p class="muted small">ชำระเงินกับพนักงานได้เลยเมื่อทานเสร็จ</p>':"")+"</main>"}
+  const hero='<div class="cust-hero"><p class="muted" style="margin:0">'+esc(S.config.shopName)+"</p><h1>"+esc(ctxLabel(t))+"</h1>"+(t==="TA"&&S.taCust?'<p class="muted small" style="margin:2px 0 0">📞 '+esc(S.taCust.phone)+' <button class="btn ghost small" style="min-height:30px;padding:2px 10px" data-a="custTAedit">'+L("แก้ไข","Edit")+"</button></p>":"")+
+    (exp?"":'<p class="muted small" style="margin:4px 0 0">'+L("เลือกเมนูแล้วกดส่งออเดอร์ อาหารจะส่งเข้าครัวทันที","Pick your dishes and send your order. It goes straight to the kitchen.")+"</p>"+(left!==Infinity?'<span class="ctimer'+(left<60000?" low":"")+'" role="timer">⏱ '+L("เหลือเวลาสั่ง","Time left to order")+' <span id="ctime">'+mmss(left)+"</span></span>":""))+"</div>";
+  const totalBox=total?'<div class="panel row between"><span>'+L("ยอดรวมตอนนี้","Current total")+'</span><span class="grand">'+baht(total)+"</span></div>":"";
+  if(exp)return hero+'<main class="wrap"><div class="panel expired"><div class="big">⏱</div><h2>'+L("หมดเวลาสั่งอาหาร","Ordering time is up")+'</h2><p class="muted">'+L("ถ้าต้องการสั่งเพิ่ม กรุณาสแกน QR ที่โต๊ะอีกครั้ง","To order more, please scan the QR code on your table again.")+"</p></div>"+sentList(t,false)+totalBox+"</main>";
+  return hero+'<main class="wrap">'+menuPicker()+sentList(t,false)+(total?totalBox+'<p class="muted small">'+L("ชำระเงินกับพนักงานได้เลยเมื่อทานเสร็จ","Please pay our staff when you're finished.")+"</p>":"")+"</main>"}
 
 /* kitchen */
 function lateMin(){const v=Number(S.config.lateMinutes);return v>0?v:10}
@@ -680,6 +706,7 @@ function viewMenu(){
   const cats=categories();
   let html=migrateBox()+'<div class="panel"><h2 style="font-size:19px;margin-bottom:12px">'+(editing?"แก้ไข "+esc(editing.name):"เพิ่มเมนูใหม่")+'</h2>'+
    '<div class="field"><label for="mName">ชื่อเมนู</label><input id="mName" data-f="mName" value="'+esc(f.mName||"")+'" placeholder="เช่น สเต็กแซลมอน" autocomplete="off"></div>'+
+   '<div class="field"><label for="mNameEn">ชื่อภาษาอังกฤษ (สำหรับลูกค้าที่เลือกภาษาอังกฤษ)</label><input id="mNameEn" data-f="mNameEn" value="'+esc(f.mNameEn!=null&&f.mNameEn!==""?f.mNameEn:(EN_MAP[(f.mName||"").trim()]||""))+'" placeholder="e.g. Salmon Steak" autocomplete="off" autocapitalize="words"></div>'+
    (()=>{const num=(id,lab)=>'<div class="field"><label for="'+id+'">'+lab+'</label><input id="'+id+'" data-f="'+id+'" type="number" inputmode="decimal" pattern="[0-9]*" min="0" step="any" value="'+esc(f[id]==null?"":f[id])+'"></div>';
      return '<label class="check"><input type="checkbox" id="mVar" data-f="mVar"'+(f.mVar?" checked":"")+'> ราคาไม่คงที่ (ขึ้นกับขนาด น้ำหนัก หรือราคาวัตถุดิบ ร้านใส่ราคาเองตอนคิดเงิน)</label>'+
      (f.mVar?'<div class="grid2">'+num("mMin","ทานที่ร้าน ต่ำสุด")+num("mMax","ทานที่ร้าน สูงสุด")+num("mMinTA","กลับบ้าน ต่ำสุด")+num("mMaxTA","กลับบ้าน สูงสุด")+"</div>":
@@ -693,8 +720,8 @@ function viewMenu(){
    (sauceCfg().cats.includes((f.mCat||"").trim())?'<label class="check"><input type="checkbox" id="mNoOpt" data-f="mNoOpt"'+(f.mNoOpt?" checked":"")+'> ไม่ต้องให้เลือกซอส (เช่น เมนูที่มีซอสในตัวอยู่แล้ว)</label>':"")+
    '<div class="row"><button class="btn" data-a="saveMenu">'+(editing?"บันทึกการแก้ไข":"เพิ่มเมนู")+"</button>"+(editing?'<button class="btn ghost" data-a="cancelEdit">ยกเลิก</button>':"")+"</div></div>";
   if(!S.menu.length)return html+'<div style="margin-top:16px">'+importBox()+"</div>";
-  cats.forEach(c=>{html+='<h2 class="section-title">'+esc(c)+'</h2><div class="panel list" style="padding:0 16px">'+S.menu.filter(m=>(m.cat||"อื่น ๆ")===c).map(m=>{const on=m.available!==false;
-   return '<div class="lrow">'+(imgFor(m)?'<img class="mthumb" src="'+esc(imgFor(m))+'" alt="" loading="lazy" onerror="this.remove()">':"")+'<div class="grow"><div>'+esc(m.name)+(optGroupFor(m)?'<span class="tag">เลือกซอส</span>':"")+'</div><div class="muted small">ทานที่ร้าน '+priceTxt(m,false)+"  กลับบ้าน "+priceTxt(m,true)+'</div></div><button class="toggle '+(on?"on":"off")+'" data-a="avail" data-id="'+m.id+'">'+(on?"มีขาย":"หมด")+'</button><button class="btn ghost small" data-a="edit" data-id="'+m.id+'">แก้ไข</button>'+
+  cats.forEach(c=>{html+='<h2 class="section-title">'+esc(c)+'</h2><div class="panel list" style="padding:0 16px">'+S.menu.filter(m=>(m.cat||"อื่น ๆ")===c).map(m=>{const st=menuState(m);
+   return '<div class="lrow">'+(imgFor(m)?'<img class="mthumb" src="'+esc(imgFor(m))+'" alt="" loading="lazy" onerror="this.remove()">':"")+'<div class="grow"><div>'+esc(m.name)+(optGroupFor(m)?'<span class="tag">เลือกซอส</span>':"")+'</div><div class="muted small">ทานที่ร้าน '+priceTxt(m,false)+"  กลับบ้าน "+priceTxt(m,true)+'</div></div><span class="stseg" role="group" aria-label="สถานะ">'+[["on","มีขาย"],["sold","หมดวันนี้"],["pause","ปิดชั่วคราว"]].map(([k,lab])=>'<button data-a="setSt" data-id="'+m.id+'" data-v="'+k+'" aria-pressed="'+(st===k)+'" class="st-'+k+'">'+lab+"</button>").join("")+'</span><button class="btn ghost small" data-a="edit" data-id="'+m.id+'">แก้ไข</button>'+
     (S.arm==="del:"+m.id?'<button class="btn warn small" data-a="delMenu" data-id="'+m.id+'">ยืนยันลบ</button>':'<button class="btn ghost small" data-a="arm" data-k="del:'+m.id+'">ลบ</button>')+"</div>"}).join("")+"</div>"});
   return html}
 
@@ -746,22 +773,22 @@ function sheetHtml(){
   if(!S.sheet)return "";
   let title="",body="",foot="";
   const t=S.customer||S.table;
-  if(S.sheet==="cart"){title="ตะกร้า "+ctxLabel(t);
-    body=S.cart.length?S.cart.map((l,i)=>'<div class="lrow" style="flex-wrap:wrap"><div class="grow"><div>'+esc(l.name)+'</div>'+optHtml(l)+'<div class="muted small">'+(cartUnit(l,taCtx())==null?rangeTxt(menuById(l.mid),taCtx())+" ร้านแจ้งราคาตอนคิดเงิน":baht(cartUnit(l,taCtx())*l.qty))+'</div></div><div class="qty"><button data-a="qty" data-i="'+i+'" data-d="-1" aria-label="ลด">−</button><span>'+l.qty+'</span><button data-a="qty" data-i="'+i+'" data-d="1" aria-label="เพิ่ม">+</button></div><input class="note-in" id="note'+i+'" data-f="note:'+i+'" maxlength="80" value="'+esc(l.note||"")+'" placeholder="หมายเหตุ เช่น สุกมาก ไม่ใส่ผัก"></div>').join(""):'<div class="empty">ตะกร้าว่าง</div>';
-    foot=(S.customer&&custLeft()!==Infinity?'<div style="text-align:center;margin-bottom:8px"><span class="ctimer'+(custLeft()<60000?" low":"")+'">⏱ เหลือเวลาสั่ง <span id="ctime2">'+mmss(custLeft())+"</span></span></div>":"")+'<div class="row between" style="margin-bottom:10px"><span>รวม</span><span class="grand">'+baht(cartTotal())+(cartHasVar()?'<small class="pnote" style="text-align:right">+ รายการราคาตามน้ำหนัก</small>':"")+'</span></div>'+(S.customer?'<button class="btn block" data-a="toConfirm"'+(S.cart.length?"":" disabled")+">ถัดไป ทวนรายการ</button>":'<button class="btn block" data-a="send"'+(S.cart.length&&!S.busy?"":" disabled")+">ส่งเข้าครัว</button>")}
-  else if(S.sheet==="confirm"){const isTAlink=S.customer==="TA";title="ทวนรายการก่อนส่ง";
+  if(S.sheet==="cart"){title=L("ตะกร้า ","Your cart: ")+ctxLabel(t);
+    body=S.cart.length?S.cart.map((l,i)=>{const m=menuById(l.mid);const u=cartUnit(l,taCtx());return '<div class="lrow" style="flex-wrap:wrap"><div class="grow"><div>'+esc(trName(m,l.name))+"</div>"+optHtml(l)+'<div class="muted small">'+(u==null?rangeTxt(m,taCtx())+L(" ร้านแจ้งราคาตอนคิดเงิน"," (price confirmed at checkout)"):baht(u*l.qty))+'</div></div><div class="qty"><button data-a="qty" data-i="'+i+'" data-d="-1" aria-label="'+L("ลด","Decrease")+'">−</button><span>'+l.qty+'</span><button data-a="qty" data-i="'+i+'" data-d="1" aria-label="'+L("เพิ่ม","Increase")+'">+</button></div><input class="note-in" id="note'+i+'" data-f="note:'+i+'" maxlength="80" value="'+esc(l.note||"")+'" placeholder="'+L("หมายเหตุ เช่น สุกมาก ไม่ใส่ผัก","Note, e.g. well done, no veggies")+'"></div>'}).join(""):'<div class="empty">'+L("ตะกร้าว่าง","Your cart is empty")+"</div>";
+    foot=(S.customer&&custLeft()!==Infinity?'<div style="text-align:center;margin-bottom:8px"><span class="ctimer'+(custLeft()<60000?" low":"")+'">⏱ '+L("เหลือเวลาสั่ง","Time left to order")+' <span id="ctime2">'+mmss(custLeft())+"</span></span></div>":"")+'<div class="row between" style="margin-bottom:10px"><span>'+L("รวม","Total")+'</span><span class="grand">'+baht(cartTotal())+(cartHasVar()?'<small class="pnote" style="text-align:right">'+L("+ รายการราคาตามน้ำหนัก","+ items priced by weight")+"</small>":"")+"</span></div>"+(S.customer?'<button class="btn block" data-a="toConfirm"'+(S.cart.length?"":" disabled")+">"+L("ถัดไป ทวนรายการ","Next: review order")+"</button>":'<button class="btn block" data-a="send"'+(S.cart.length&&!S.busy?"":" disabled")+">ส่งเข้าครัว</button>")}
+  else if(S.sheet==="confirm"){const isTAlink=S.customer==="TA";title=L("ทวนรายการก่อนส่ง","Review your order");
     const cta=isTAlink||S.dine==="ta";
-    body=S.cart.map(l=>'<div class="rvrow"><span><b>'+l.qty+"×</b> "+esc(l.name)+(l.opt?'<br><span style="color:var(--basil);font-weight:600;font-size:15px">• '+esc(l.opt)+"</span>":"")+(l.note?'<br><span class="muted small">'+esc(l.note)+"</span>":"")+"</span><span>"+(cartUnit(l,cta)==null?'<span class="muted small">'+rangeTxt(menuById(l.mid),cta)+"</span>":baht(cartUnit(l,cta)*l.qty))+"</span></div>").join("")+
-      '<div class="row between" style="margin:10px 0 4px"><span style="font-weight:600">รวม'+(cta?" (ราคากลับบ้าน)":"")+'</span><span class="grand">'+baht(cartTotal(cta))+"</span></div>"+(cartHasVar()?'<p class="vnote">มีรายการราคาตามน้ำหนัก ร้านจะแจ้งราคาจริงตอนคิดเงิน</p>':"");
-    if(isTAlink)body+='<p class="muted" style="margin:8px 0 0">สั่งกลับบ้านในชื่อ <b>'+esc(S.taCust?S.taCust.name:"")+"</b> "+esc(S.taCust?S.taCust.phone:"")+"</p>";
-    else{body+='<div class="dinechoice" role="radiogroup" aria-label="รูปแบบการสั่ง"><button class="dinebtn" role="radio" data-a="dine" data-v="in" aria-pressed="'+(S.dine==="in")+'" aria-checked="'+(S.dine==="in")+'"><span class="ic">🍽️</span>ทานที่ร้าน<span class="fromt">'+tLabel(S.customer)+'</span></button><button class="dinebtn" role="radio" data-a="dine" data-v="ta" aria-pressed="'+(S.dine==="ta")+'" aria-checked="'+(S.dine==="ta")+'"><span class="ic">🛍️</span>สั่งกลับบ้าน<span class="fromt">แยกบิล</span></button></div>';
-      if(S.dine==="ta"){const f=S.form;body+='<div class="field"><label for="cName">ชื่อ</label><input id="cName" data-f="cName" autocomplete="name" value="'+esc(f.cName!=null?f.cName:(S.taCust?S.taCust.name:""))+'"></div><div class="field"><label for="cPhone">เบอร์โทร</label><input id="cPhone" data-f="cPhone" type="tel" inputmode="tel" autocomplete="tel" value="'+esc(f.cPhone!=null?f.cPhone:(S.taCust?S.taCust.phone:""))+'"></div>'}}
-    foot=(custLeft()!==Infinity?'<div style="text-align:center;margin-bottom:8px"><span class="ctimer'+(custLeft()<60000?" low":"")+'">⏱ เหลือเวลาสั่ง <span id="ctime2">'+mmss(custLeft())+"</span></span></div>":"")+
-      '<div class="row"><button class="btn ghost" style="flex:1" data-a="backCart">แก้ไข</button><button class="btn" style="flex:2" data-a="send"'+((isTAlink||S.dine)&&!S.busy?"":" disabled")+">"+(isTAlink||S.dine?"ยืนยันส่งออเดอร์":"เลือกด้านบนก่อน")+"</button></div>"}
+    body=S.cart.map(l=>{const m=menuById(l.mid);const u=cartUnit(l,cta);return '<div class="rvrow"><span><b>'+l.qty+"×</b> "+esc(trName(m,l.name))+(l.opt?'<br><span style="color:var(--basil);font-weight:600;font-size:15px">• '+esc(trOpt(l.opt))+"</span>":"")+(l.note?'<br><span class="muted small">'+esc(l.note)+"</span>":"")+"</span><span>"+(u==null?'<span class="muted small">'+rangeTxt(m,cta)+"</span>":baht(u*l.qty))+"</span></div>"}).join("")+
+      '<div class="row between" style="margin:10px 0 4px"><span style="font-weight:600">'+L("รวม","Total")+(cta?L(" (ราคากลับบ้าน)"," (takeaway prices)"):"")+'</span><span class="grand">'+baht(cartTotal(cta))+"</span></div>"+(cartHasVar()?'<p class="vnote">'+L("มีรายการราคาตามน้ำหนัก ร้านจะแจ้งราคาจริงตอนคิดเงิน","Some items are priced by weight. We'll confirm the price at checkout.")+"</p>":"");
+    if(isTAlink)body+='<p class="muted" style="margin:8px 0 0">'+L("สั่งกลับบ้านในชื่อ ","Takeaway order for ")+"<b>"+esc(S.taCust?S.taCust.name:"")+"</b> "+esc(S.taCust?S.taCust.phone:"")+"</p>";
+    else{body+='<div class="dinechoice" role="radiogroup" aria-label="'+L("รูปแบบการสั่ง","Order type")+'"><button class="dinebtn" role="radio" data-a="dine" data-v="in" aria-pressed="'+(S.dine==="in")+'" aria-checked="'+(S.dine==="in")+'"><span class="ic">🍽️</span>'+L("ทานที่ร้าน","Dine in")+'<span class="fromt">'+tLabel(S.customer)+'</span></button><button class="dinebtn" role="radio" data-a="dine" data-v="ta" aria-pressed="'+(S.dine==="ta")+'" aria-checked="'+(S.dine==="ta")+'"><span class="ic">🛍️</span>'+L("สั่งกลับบ้าน","Takeaway")+'<span class="fromt">'+L("แยกบิล","Separate bill")+"</span></button></div>";
+      if(S.dine==="ta"){const f=S.form;body+='<div class="field"><label for="cName">'+L("ชื่อ","Name")+'</label><input id="cName" data-f="cName" autocomplete="name" value="'+esc(f.cName!=null?f.cName:(S.taCust?S.taCust.name:""))+'"></div><div class="field"><label for="cPhone">'+L("เบอร์โทร","Phone number")+'</label><input id="cPhone" data-f="cPhone" type="tel" inputmode="tel" autocomplete="tel" value="'+esc(f.cPhone!=null?f.cPhone:(S.taCust?S.taCust.phone:""))+'"></div>'}}
+    foot=(custLeft()!==Infinity?'<div style="text-align:center;margin-bottom:8px"><span class="ctimer'+(custLeft()<60000?" low":"")+'">⏱ '+L("เหลือเวลาสั่ง","Time left to order")+' <span id="ctime2">'+mmss(custLeft())+"</span></span></div>":"")+
+      '<div class="row"><button class="btn ghost" style="flex:1" data-a="backCart">'+L("แก้ไข","Edit")+'</button><button class="btn" style="flex:2" data-a="send"'+((isTAlink||S.dine)&&!S.busy?"":" disabled")+">"+(isTAlink||S.dine?L("ยืนยันส่งออเดอร์","Send order"):L("เลือกด้านบนก่อน","Choose an option above"))+"</button></div>"}
   else if(S.sheet==="opt"){const m=menuById(S.optFor);const g=optGroupFor(m);if(!m||!g){S.sheet=null;return ""}
-    title=m.name;
-    body=(imgFor(m)?'<img class="opthero" src="'+esc(imgFor(m))+'" alt="" onerror="this.remove()">':"")+'<div class="row between" style="margin:0 0 6px"><span class="muted">'+esc(g.title)+'</span><span style="font-weight:700">'+priceTxt(m,taCtx())+"</span></div>"+(isVar(m)?'<p class="vnote">ราคาขึ้นอยู่กับขนาด น้ำหนัก และราคาวัตถุดิบในแต่ละวัน ร้านจะแจ้งราคาจริงตอนคิดเงิน</p>':"")+'<div class="optlist" role="radiogroup">'+g.choices.map(c=>'<button class="optbtn" role="radio" data-a="pick" data-v="'+esc(c.label)+'" aria-checked="'+(S.optPick===c.label)+'" aria-pressed="'+(S.optPick===c.label)+'"><span>'+esc(c.label)+(c.add?' <span class="muted">+฿'+c.add+"</span>":"")+"</span></button>").join("")+"</div>";
-    foot=S.optEdit?'<button class="btn block" data-a="saveOpt"'+(S.optPick?"":" disabled")+">บันทึกซอสใหม่</button>":'<button class="btn block" data-a="addOpt"'+(S.optPick?"":" disabled")+">"+(S.optPick?"เพิ่มลงตะกร้า":"เลือกซอสก่อน")+"</button>"}
+    title=S.customer?trName(m):m.name;
+    body=(imgFor(m)?'<img class="opthero" src="'+esc(imgFor(m))+'" alt="" onerror="this.remove()">':"")+'<div class="row between" style="margin:0 0 6px"><span class="muted">'+esc(trOpt(g.title))+'</span><span style="font-weight:700">'+priceTxt(m,taCtx())+"</span></div>"+(isVar(m)?'<p class="vnote">'+L("ราคาขึ้นอยู่กับขนาด น้ำหนัก และราคาวัตถุดิบในแต่ละวัน ร้านจะแจ้งราคาจริงตอนคิดเงิน","Price depends on size, weight and the day's ingredient prices. We'll confirm the price at checkout.")+"</p>":"")+'<div class="optlist" role="radiogroup">'+g.choices.map(c=>'<button class="optbtn" role="radio" data-a="pick" data-v="'+esc(c.label)+'" aria-checked="'+(S.optPick===c.label)+'" aria-pressed="'+(S.optPick===c.label)+'"><span>'+esc(trOpt(c.label))+(c.add?' <span class="muted">+฿'+c.add+"</span>":"")+"</span></button>").join("")+"</div>";
+    foot=S.optEdit?'<button class="btn block" data-a="saveOpt"'+(S.optPick?"":" disabled")+">บันทึกซอสใหม่</button>":'<button class="btn block" data-a="addOpt"'+(S.optPick?"":" disabled")+">"+(S.optPick?L("เพิ่มลงตะกร้า","Add to cart"):L("เลือกซอสก่อน","Choose a sauce first"))+"</button>"}
   else if(S.sheet==="day"&&S.dayDate){const d=S.dayDate;const day=S.sales.filter(x=>x.date===d).sort((a,b)=>b.paidAt-a.paidAt);
     title="ยอดขาย "+new Date(d+"T12:00:00").toLocaleDateString("th-TH",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
     const tot=day.reduce((a,x)=>a+(x.total||0),0);const byM={cash:0,promptpay:0};day.forEach(x=>{byM[x.method]=(byM[x.method]||0)+(x.total||0)});
@@ -832,7 +859,7 @@ document.addEventListener("click",async e=>{
   case "table":S.ta=null;S.table=el.dataset.t;S.cart=[];S.cat=null;render();window.scrollTo(0,0);break;
   case "tables":S.table=null;S.ta=null;S.cart=[];render();break;
   case "cat":S.cat=el.dataset.c||null;render();break;
-  case "add":{if(custExpired()){render();return}const m=menuById(el.dataset.id);if(!m||m.available===false)return;
+  case "add":{if(custExpired()){render();return}const m=menuById(el.dataset.id);if(!m||menuState(m)!=="on")return;
     if(optGroupFor(m)){S.optFor=m.id;S.optPick=null;S.sheet="opt";render();return}
     const l=S.cart.find(x=>x.mid===m.id&&!x.note&&!x.opt);if(l)l.qty++;else S.cart.push({mid:m.id,name:m.name,price:0,qty:1,note:""});render();break}
   case "tick":{const o=S.orders.find(x=>x.id===el.dataset.id);if(!o)return;const idx=+el.dataset.i;const n=(o.items||[]).length;
@@ -844,18 +871,19 @@ document.addEventListener("click",async e=>{
   case "toConfirm":if(custExpired()){render();return}S.sheet="confirm";render();break;
   case "backCart":S.sheet="cart";render();break;
   case "dine":S.dine=el.dataset.v;render();break;
+  case "lang":S.lang=S.lang==="en"?"th":"en";lsSet("lang",S.lang);render();break;
   case "pick":S.optPick=el.dataset.v;render();break;
-  case "addOpt":{if(S.optEdit)return;const m=menuById(S.optFor);if(!m||!S.optPick)return;const l=S.cart.find(x=>x.mid===m.id&&x.opt===S.optPick&&!x.note);if(l)l.qty++;else S.cart.push({mid:m.id,name:m.name,price:0,qty:1,note:"",opt:S.optPick});S.sheet=null;S.optFor=null;toast("เพิ่ม "+m.name+" แล้ว");render();break}
+  case "addOpt":{if(S.optEdit)return;const m=menuById(S.optFor);if(!m||!S.optPick)return;const l=S.cart.find(x=>x.mid===m.id&&x.opt===S.optPick&&!x.note);if(l)l.qty++;else S.cart.push({mid:m.id,name:m.name,price:0,qty:1,note:"",opt:S.optPick});S.sheet=null;S.optFor=null;toast(L("เพิ่ม "+m.name+" แล้ว","Added "+trName(m)));render();break}
   case "qty":{const i=+el.dataset.i;S.cart[i].qty=Math.min(99,S.cart[i].qty+(+el.dataset.d));if(S.cart[i].qty<=0)S.cart.splice(i,1);if(!S.cart.length)S.sheet=null;render();break}
   case "sheet":S.sheet=el.dataset.s;if(S.sheet==="bill"){S.form.discount="";S.form.received="";S.form.vp={};S.pad=null;S.method="cash"}render();break;
   case "close":if(S.sheet==="receipt"&&S.table==="TA")S.ta=null;S.sheet=null;S.optEdit=null;render();break;
-  case "send":{if(custExpired()){S.sheet=null;S.cart=[];toast("หมดเวลาสั่งอาหาร กรุณาสแกน QR อีกครั้ง");render();return}
+  case "send":{if(custExpired()){S.sheet=null;S.cart=[];toast(L("หมดเวลาสั่งอาหาร กรุณาสแกน QR อีกครั้ง","Ordering time is up. Please scan the QR code again."));render();return}
     let t=S.customer||S.table;let who=null,fromTable="";
     if(S.customer==="TA")who=S.taCust;
     else if(S.customer){if(S.dine==="ta"){const name=String(S.form.cName!=null?S.form.cName:(S.taCust?S.taCust.name:"")).trim().slice(0,60);const phone=String(S.form.cPhone!=null?S.form.cPhone:(S.taCust?S.taCust.phone:"")).replace(/[^\d+]/g,"").slice(0,15);
-        if(!name){toast("กรุณาใส่ชื่อ");return}if(phone.replace(/\D/g,"").length<9){toast("กรุณาใส่เบอร์โทรให้ครบ");return}
+        if(!name){toast(L("กรุณาใส่ชื่อ","Please enter your name"));return}if(phone.replace(/\D/g,"").length<9){toast(L("กรุณาใส่เบอร์โทรให้ครบ","Please enter a full phone number"));return}
         who={name,phone};fromTable=S.customer;t="TA";S.taCust=who;ssSet("taCust",who)}
-      else if(S.dine!=="in"){toast("กรุณาเลือก ทานที่ร้าน หรือ สั่งกลับบ้าน");return}}
+      else if(S.dine!=="in"){toast(L("กรุณาเลือก ทานที่ร้าน หรือ สั่งกลับบ้าน","Please choose dine in or takeaway"));return}}
     else if(t==="TA")who=S.ta;
     if(t==="TA"&&!who){toast("กรุณาใส่ชื่อและเบอร์โทรก่อน");return}
     const items=S.cart.map(l=>{const m=menuById(l.mid);const u=cartUnit(l,t==="TA");return {mid:l.mid,name:l.name,price:u==null?0:u,qty:l.qty,note:(l.note||"").trim().slice(0,80),opt:l.opt||"",var:isVar(m)}});
@@ -864,7 +892,7 @@ document.addEventListener("click",async e=>{
       if(who){const c={name:String(who.name).slice(0,60),phone:String(who.phone).slice(0,20),createdAt:Date.now()};if(fromTable)c.fromTable=fromTable;b.set(dref("contacts/"+ref.id),c)}
       await b.commit();if(S.customer&&t==="TA"){S.myTA=(S.myTA||[]).concat([ref.id]);ssSet("myTA",S.myTA)}
       S.cart=[];S.sheet=null;S.dine=null;
-      toast(S.customer?(fromTable?"ส่งออเดอร์กลับบ้านแล้ว ในชื่อ "+who.name+" ชำระเงินที่เคาน์เตอร์":"ส่งออเดอร์แล้ว รออาหารสักครู่"):"ส่งเข้าครัวแล้ว")},S.customer?"ส่งออเดอร์ไม่สำเร็จ กรุณาเรียกพนักงาน":null);
+      toast(S.customer?(fromTable?L("ส่งออเดอร์กลับบ้านแล้ว ในชื่อ "+who.name+" ชำระเงินที่เคาน์เตอร์","Takeaway order sent for "+who.name+". Please pay at the counter."):L("ส่งออเดอร์แล้ว รออาหารสักครู่","Order sent! Your food is on its way.")):"ส่งเข้าครัวแล้ว")},S.customer?L("ส่งออเดอร์ไม่สำเร็จ กรุณาเรียกพนักงาน","Couldn't send your order. Please ask our staff."):null);
     S.busy=false;render();break}
   case "status":el.disabled=true;await guard(()=>updateDoc(dref("orders/"+el.dataset.id),{status:el.dataset.st}));break;
   case "arm":S.arm=el.dataset.k;render();break;
@@ -894,7 +922,7 @@ document.addEventListener("click",async e=>{
     S.ta={name,phone};S.form.taName="";S.form.taPhone="";S.cart=[];render();window.scrollTo(0,0);break}
   case "taOpen":S.ta={name:el.dataset.n,phone:el.dataset.p};S.cart=[];render();window.scrollTo(0,0);break;
   case "taBack":S.ta=null;S.cart=[];render();break;
-  case "custTA":{const name=(S.form.cName||"").trim().slice(0,60),phone=(S.form.cPhone||"").replace(/[^\d+]/g,"").slice(0,15);if(!name){toast("กรุณาใส่ชื่อ");return}if(phone.replace(/\D/g,"").length<9){toast("กรุณาใส่เบอร์โทรให้ครบ");return}
+  case "custTA":{const name=(S.form.cName||"").trim().slice(0,60),phone=(S.form.cPhone||"").replace(/[^\d+]/g,"").slice(0,15);if(!name){toast(L("กรุณาใส่ชื่อ","Please enter your name"));return}if(phone.replace(/\D/g,"").length<9){toast(L("กรุณาใส่เบอร์โทรให้ครบ","Please enter a full phone number"));return}
     S.taCust={name,phone};ssSet("taCust",S.taCust);render();window.scrollTo(0,0);break}
   case "custTAedit":S.form.cName=S.taCust?S.taCust.name:"";S.form.cPhone=S.taCust?S.taCust.phone:"";S.taCust=null;ssSet("taCust",null);S.cart=[];render();break;
   case "itemTA":{const o=S.orders.find(x=>x.id===el.dataset.id);if(!o)return;const idx=+el.dataset.i;const items=(o.items||[]).map(x=>Object.assign({},x));if(!items[idx])return;items[idx].ta=!items[idx].ta;
@@ -920,13 +948,14 @@ document.addEventListener("click",async e=>{
     let d;if(f.mVar){const a=N(f.mMin),b2=N(f.mMax);if(a==null||b2==null||!(a>=0)||!(b2>=a)){toast("ใส่ช่วงราคาทานที่ร้านให้ถูกต้อง");return}
       const c2=N(f.mMinTA),d2=N(f.mMaxTA);d={var:true,pMin:a,pMax:b2,pMinTA:c2==null?a:c2,pMaxTA:d2==null?b2:d2,price:a,priceTA:c2==null?a:c2}}
     else{const p=N(f.mPrice);if(p==null||!(p>=0)){toast("ใส่ราคาทานที่ร้านเป็นตัวเลข");return}const pt=N(f.mPriceTA);d={var:false,price:p,priceTA:pt==null?p:pt,pMin:null,pMax:null,pMinTA:null,pMaxTA:null}}
-    Object.assign(d,{name,cat,noOpt:!!f.mNoOpt,img:(f.mImg||"").trim()});
+    Object.assign(d,{name,cat,noOpt:!!f.mNoOpt,img:(f.mImg||"").trim(),nameEn:String(f.mNameEn!=null&&f.mNameEn!==""?f.mNameEn:(EN_MAP[name]||"")).trim()});
     await guard(async()=>{if(S.editId){await updateDoc(dref("menu/"+S.editId),d);toast("บันทึกแล้ว")}else{await addDoc(col("menu"),Object.assign({available:true,sort:Date.now()},d));toast("เพิ่ม "+name+" แล้ว")}
-      S.editId=null;Object.assign(S.form,{mName:"",mPrice:"",mPriceTA:"",mVar:false,mMin:"",mMax:"",mMinTA:"",mMaxTA:"",mNoOpt:false,mImg:""});render()});break}
-  case "edit":{const m=menuById(el.dataset.id);if(!m)return;S.editId=m.id;Object.assign(S.form,{mName:m.name,mPrice:String(m.price==null?"":m.price),mPriceTA:m.priceTA==null||Number(m.priceTA)===Number(m.price)?"":String(m.priceTA),mVar:!!m.var,mMin:m.pMin==null?"":String(m.pMin),mMax:m.pMax==null?"":String(m.pMax),mMinTA:m.pMinTA==null?"":String(m.pMinTA),mMaxTA:m.pMaxTA==null?"":String(m.pMaxTA),mCat:m.cat||"",mNoOpt:!!m.noOpt,mImg:m.img||""});render();window.scrollTo(0,0);break}
+      S.editId=null;Object.assign(S.form,{mName:"",mPrice:"",mPriceTA:"",mVar:false,mMin:"",mMax:"",mMinTA:"",mMaxTA:"",mNoOpt:false,mImg:"",mNameEn:""});render()});break}
+  case "edit":{const m=menuById(el.dataset.id);if(!m)return;S.editId=m.id;Object.assign(S.form,{mName:m.name,mPrice:String(m.price==null?"":m.price),mPriceTA:m.priceTA==null||Number(m.priceTA)===Number(m.price)?"":String(m.priceTA),mVar:!!m.var,mMin:m.pMin==null?"":String(m.pMin),mMax:m.pMax==null?"":String(m.pMax),mMinTA:m.pMinTA==null?"":String(m.pMinTA),mMaxTA:m.pMaxTA==null?"":String(m.pMaxTA),mCat:m.cat||"",mNoOpt:!!m.noOpt,mImg:m.img||"",mNameEn:m.nameEn||EN_MAP[m.name]||""});render();window.scrollTo(0,0);break}
   case "clearImg":S.form.mImg="";render();break;
-  case "cancelEdit":S.editId=null;Object.assign(S.form,{mName:"",mPrice:"",mPriceTA:"",mVar:false,mMin:"",mMax:"",mMinTA:"",mMaxTA:"",mNoOpt:false,mImg:""});render();break;
-  case "avail":{const m=menuById(el.dataset.id);if(!m)return;await guard(()=>updateDoc(dref("menu/"+m.id),{available:m.available===false}));break}
+  case "cancelEdit":S.editId=null;Object.assign(S.form,{mName:"",mPrice:"",mPriceTA:"",mVar:false,mMin:"",mMax:"",mMinTA:"",mMaxTA:"",mNoOpt:false,mImg:"",mNameEn:""});render();break;
+  case "setSt":{const m=menuById(el.dataset.id);if(!m)return;const v=el.dataset.v;const d=v==="sold"?{off:"sold",offDate:today(),available:true}:v==="pause"?{off:"pause",offDate:null,available:true}:{off:null,offDate:null,available:true};
+    Object.assign(m,d);render();await guard(()=>updateDoc(dref("menu/"+m.id),d));break}
   case "delMenu":S.arm=null;await guard(()=>deleteDoc(dref("menu/"+el.dataset.id)));toast("ลบเมนูแล้ว");break;
   case "saveSetup":{const f=S.form;const data={shopName:(f.sName||"").trim()||"ร้านของฉัน",promptpay:(f.sPp||"").replace(/\D/g,""),service:Math.max(0,Number(f.sSvc)||0),vat:Math.max(0,Number(f.sVat)||0),tables:Math.max(1,Math.min(60,parseInt(f.sTables)||10)),custMinutes:Math.max(0,Math.min(240,parseInt(f.sCust)||0)),lateMinutes:Math.max(1,Math.min(120,parseInt(f.sLate)||10)),
       seedDrinks:!!S.config.seedDrinks,menuV:Number(S.config.menuV)||0,sauce:{cat:(f.oCat||"").trim(),title:(f.oTitle||"").trim()||"เลือกซอส",v2:true,v3:true,choices:String(f.oChoices||"").split(/\n|,/).map(x=>x.trim()).filter(Boolean).slice(0,30)}};
