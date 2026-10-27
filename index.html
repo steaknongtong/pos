@@ -394,13 +394,17 @@ nav.tabs{background:var(--fill);border-radius:12px;padding:3px;gap:2px;margin-bo
 .stseg button[aria-pressed="true"].st-sold{background:var(--chili);color:#fff}
 .stseg button[aria-pressed="true"].st-pause{background:var(--ink);color:var(--surface)}
 @media (max-width:520px){.lrow{flex-wrap:wrap}.stseg{order:5;width:100%}.stseg button{flex:1}}
+
+.rsteps{display:flex;gap:8px;justify-content:center;margin:0 0 14px}
+.rsteps span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--fill);color:var(--muted)}
+.rsteps span.on{background:var(--chili);color:#fff}
 </style>
 </head>
 <body>
 <div id="app"><div class="empty">กำลังโหลด…</div></div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, collection, query, where, onSnapshot, addDoc, setDoc, updateDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, collection, query, where, onSnapshot, addDoc, setDoc, updateDoc, deleteDoc, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
@@ -744,7 +748,8 @@ function viewReport(){
    '<div class="stats"><div class="panel stat"><div class="muted small">ยอดขายทั้งเดือน</div><div class="v">'+baht(total)+'</div></div><div class="panel stat"><div class="muted small">จำนวนบิล</div><div class="v">'+cnt+'</div></div><div class="panel stat"><div class="muted small">เฉลี่ยต่อวันที่เปิดขาย</div><div class="v">'+baht(daysWith?total/daysWith:0)+'</div></div><div class="panel stat"><div class="muted small">วันที่ขายดีที่สุด</div><div class="v" style="font-size:20px">'+(best?new Date(best[0]+"T12:00:00").toLocaleDateString("th-TH",{day:"numeric",month:"short"})+" "+baht(best[1].v):"-")+"</div></div></div>"+
    '<p class="muted" style="margin:10px 2px">เงินสด '+baht(byM.cash||0)+"  พร้อมเพย์ "+baht(byM.promptpay||0)+"</p>"+
    '<h2 class="section-title">ยอดขายรายวัน <span class="muted small" style="font-weight:400">แตะวันที่เพื่อดูบิลทั้งหมด</span></h2><div class="panel" style="padding:4px 14px">'+(rows.length?rows.join(""):'<div class="empty">ไม่มีข้อมูล</div>')+"</div>"+
-   '<h2 class="section-title">เมนูขายดีประจำเดือน</h2><div class="panel list" style="padding:0 16px">'+(top.length?top.map(([n,c],i)=>'<div class="lrow"><span class="muted" style="width:22px">'+(i+1)+'</span><span class="grow">'+esc(n)+'</span><span>'+c.q+' จาน</span><span class="muted" style="min-width:80px;text-align:right">'+baht(c.v)+"</span></div>").join(""):'<div class="empty">ยังไม่มีการขายในเดือนนี้</div>')+"</div>"}
+   '<h2 class="section-title">เมนูขายดีประจำเดือน</h2><div class="panel list" style="padding:0 16px">'+(top.length?top.map(([n,c],i)=>'<div class="lrow"><span class="muted" style="width:22px">'+(i+1)+'</span><span class="grow">'+esc(n)+'</span><span>'+c.q+' จาน</span><span class="muted" style="min-width:80px;text-align:right">'+baht(c.v)+"</span></div>").join(""):'<div class="empty">ยังไม่มีการขายในเดือนนี้</div>')+"</div>"+
+   '<div style="margin:36px 0 8px;text-align:center"><button class="btn ghost" style="color:var(--chili)" data-a="resetOpen">🗑 ลบข้อมูลยอดขาย</button><p class="muted small" style="margin:6px 0 0">ใช้ลบข้อมูลทดสอบ หรือบิลที่บันทึกผิด</p></div>'}
 
 /* setup */
 function viewSetup(){
@@ -803,6 +808,19 @@ function sheetHtml(){
           (x.custName?'<hr><div>ลูกค้า: '+esc(x.custName)+(x.custPhone?' 📞 <a href="tel:'+esc(x.custPhone)+'">'+esc(x.custPhone)+"</a>":"")+"</div>":"")+
           '<div class="muted small" style="margin-top:6px">ชำระเมื่อ '+new Date(x.paidAt).toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"})+"</div></div>":"")+"</div>"}).join(""):'<div class="empty">ไม่มีบิลในวันนี้</div>');
     foot='<div class="row"><button class="btn ghost" style="flex:1" data-a="csvDay"'+(day.length?"":" disabled")+'>ส่งออก CSV</button><button class="btn" style="flex:1" data-a="close">ปิด</button></div>'}
+  else if(S.sheet==="reset"){const R=S.reset||{};title="ลบข้อมูลยอดขาย";
+    const scopeTxt=R.scope==="day"?"วันที่ "+new Date(R.date+"T12:00:00").toLocaleDateString("th-TH",{day:"numeric",month:"long",year:"numeric"}):R.scope==="month"?"เดือน"+new Date(S.reportMonth+"-01T12:00:00").toLocaleDateString("th-TH",{month:"long",year:"numeric"}):"ทั้งหมดทุกวัน";
+    const steps='<div class="rsteps">'+[1,2,3].map(n=>'<span class="'+(R.step>=n?"on":"")+'">'+n+"</span>").join("")+"</div>";
+    if(R.step===1){body=steps+'<p style="margin-top:0"><b>ขั้นที่ 1:</b> เลือกข้อมูลที่จะลบ</p><div class="optlist" role="radiogroup">'+
+      [["day","วันเดียว"],["month","ทั้งเดือนที่กำลังดูอยู่ ("+new Date(S.reportMonth+"-01T12:00:00").toLocaleDateString("th-TH",{month:"long",year:"numeric"})+")"],["all","ยอดขายทั้งหมดทุกวัน"]].map(([k,lab])=>'<button class="optbtn" role="radio" data-a="resetScope" data-v="'+k+'" aria-pressed="'+(R.scope===k)+'" aria-checked="'+(R.scope===k)+'"><span>'+lab+"</span></button>").join("")+"</div>"+
+      (R.scope==="day"?'<div class="field" style="margin-top:12px"><label for="rsDate">เลือกวันที่</label><input id="rsDate" type="date" data-f="rsDate" value="'+esc(R.date||"")+'" max="'+today()+'"></div>':"");
+      foot='<div class="row"><button class="btn ghost" style="flex:1" data-a="close">ยกเลิก</button><button class="btn" style="flex:2" data-a="resetNext"'+(R.scope&&(R.scope!=="day"||R.date)&&!R.loading?"":" disabled")+">"+(R.loading?"กำลังตรวจสอบ…":"ถัดไป")+"</button></div>"}
+    else if(R.step===2){body=steps+'<p style="margin-top:0"><b>ขั้นที่ 2:</b> ตรวจสอบข้อมูลที่จะถูกลบ</p><div class="panel" style="background:var(--chili-soft);box-shadow:none"><div class="muted small">'+esc(scopeTxt)+'</div><div class="grand" style="color:var(--chili)">'+R.ids.length+" บิล</div><div>ยอดรวม "+baht(R.total)+"</div></div>"+
+      (R.ids.length?'<label class="check" style="margin-top:14px"><input type="checkbox" id="rsAck" data-f="rsAck"'+(R.ack?" checked":"")+'> ฉันเข้าใจว่าข้อมูลที่ลบแล้ว<b>กู้คืนไม่ได้</b> และจะหายจากรายงานทุกเครื่อง</label>':'<p class="muted">ไม่มีข้อมูลยอดขายในช่วงที่เลือก</p>');
+      foot='<div class="row"><button class="btn ghost" style="flex:1" data-a="resetBack">ย้อนกลับ</button><button class="btn warn" style="flex:2" data-a="resetNext"'+(R.ids.length&&R.ack?"":" disabled")+">ถัดไป</button></div>"}
+    else{const ok=(S.form.rsWord||"").trim()==="ลบยอดขาย";body=steps+'<p style="margin-top:0"><b>ขั้นที่ 3:</b> ยืนยันครั้งสุดท้าย</p><p>พิมพ์คำว่า <b style="color:var(--chili)">ลบยอดขาย</b> ในช่องด้านล่าง เพื่อลบ '+R.ids.length+" บิล ("+esc(scopeTxt)+")</p>"+
+      '<div class="field"><input id="rsWord" data-f="rsWord" autocomplete="off" value="'+esc(S.form.rsWord||"")+'" placeholder="ลบยอดขาย"></div>';
+      foot='<div class="row"><button class="btn ghost" style="flex:1" data-a="resetBack">ย้อนกลับ</button><button class="btn warn" style="flex:2" data-a="resetDo"'+(ok&&!S.busy?"":" disabled")+">"+(S.busy?"กำลังลบ…":"ลบถาวร "+R.ids.length+" บิล")+"</button></div>"}}
   else if(S.sheet==="summary"){title="สรุปรายการที่ต้องทำ";
     const act=S.orders.filter(o=>o.status==="new"||o.status==="cooking");const map=new Map();
     act.forEach(o=>(o.items||[]).forEach((i,idx)=>{if(servedMap(o)[idx])return;const nm=lineName(o,i);const q=parseInt(i.qty)||0;if(!q)return;let r=map.get(nm);if(!r){const m=menuById(i.mid);r={nm,q:0,qn:0,qc:0,opts:new Map(),notes:[],sort:m?(categories().indexOf(m.cat||"อื่น ๆ")*10000+(m.sort||0)):1e9};map.set(nm,r)}
@@ -872,6 +890,17 @@ document.addEventListener("click",async e=>{
   case "backCart":S.sheet="cart";render();break;
   case "dine":S.dine=el.dataset.v;render();break;
   case "lang":S.lang=S.lang==="en"?"th":"en";lsSet("lang",S.lang);render();break;
+  case "resetOpen":S.reset={step:1,scope:null,date:today(),ids:[],total:0,ack:false};S.form.rsWord="";S.sheet="reset";render();break;
+  case "resetScope":S.reset.scope=el.dataset.v;render();break;
+  case "resetBack":S.reset.step=Math.max(1,S.reset.step-1);if(S.reset.step===1)S.reset.ack=false;S.form.rsWord="";render();break;
+  case "resetNext":{const R=S.reset;if(R.step===1){R.loading=true;render();
+      try{let q;if(R.scope==="day")q=query(col("sales"),where("date","==",R.date));else if(R.scope==="month"){const [st,en]=monthRange(S.reportMonth);q=query(col("sales"),where("date",">=",st),where("date","<=",en))}else q=col("sales");
+        const snap=await getDocs(q);R.ids=snap.docs.map(d=>d.id);R.total=snap.docs.reduce((a,d)=>a+(Number(d.data().total)||0),0);R.step=2;R.ack=false}catch(err){console.error(err);toast("โหลดข้อมูลไม่สำเร็จ ลองอีกครั้ง")}
+      R.loading=false;render()}
+    else if(R.step===2&&R.ack&&R.ids.length){R.step=3;S.form.rsWord="";render()}break}
+  case "resetDo":{const R=S.reset;if((S.form.rsWord||"").trim()!=="ลบยอดขาย"||!R.ids.length)return;S.busy=true;render();
+    await guard(async()=>{for(let i=0;i<R.ids.length;i+=400){const b=writeBatch(fs);R.ids.slice(i,i+400).forEach(id=>b.delete(dref("sales/"+id)));await b.commit()}
+      toast("ลบยอดขาย "+R.ids.length+" บิลแล้ว");S.sheet=null;S.reset=null;S.form.rsWord=""});S.busy=false;render();break}
   case "pick":S.optPick=el.dataset.v;render();break;
   case "addOpt":{if(S.optEdit)return;const m=menuById(S.optFor);if(!m||!S.optPick)return;const l=S.cart.find(x=>x.mid===m.id&&x.opt===S.optPick&&!x.note);if(l)l.qty++;else S.cart.push({mid:m.id,name:m.name,price:0,qty:1,note:"",opt:S.optPick});S.sheet=null;S.optFor=null;toast(L("เพิ่ม "+m.name+" แล้ว","Added "+trName(m)));render();break}
   case "qty":{const i=+el.dataset.i;S.cart[i].qty=Math.min(99,S.cart[i].qty+(+el.dataset.d));if(S.cart[i].qty<=0)S.cart.splice(i,1);if(!S.cart.length)S.sheet=null;render();break}
@@ -974,6 +1003,9 @@ document.addEventListener("change",async e=>{const el=e.target;if(el.id!=="mFile
   S.imgBusy=false;render()});
 document.addEventListener("input",e=>{const el=e.target;const k=el.dataset&&el.dataset.f;if(!k)return;
   if(k.startsWith("note:")){const i=+k.slice(5);if(S.cart[i])S.cart[i].note=el.value;return}
+  if(k==="rsDate"){if(S.reset){S.reset.date=el.value;render()}return}
+  if(k==="rsAck"){if(S.reset){S.reset.ack=el.checked;render()}return}
+  if(k==="rsWord"){S.form.rsWord=el.value;render();return}
   if(k.startsWith("vp:")){S.form.vp=S.form.vp||{};S.form.vp[k.slice(3)]=el.value;render();return}
   if(el.type==="checkbox"){S.form[k]=el.checked;if(k==="mVar")render();return}
   S.form[k]=el.value;
