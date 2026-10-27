@@ -398,6 +398,9 @@ nav.tabs{background:var(--fill);border-radius:12px;padding:3px;gap:2px;margin-bo
 .rsteps{display:flex;gap:8px;justify-content:center;margin:0 0 14px}
 .rsteps span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--fill);color:var(--muted)}
 .rsteps span.on{background:var(--chili);color:#fff}
+
+.spbox{margin:2px 0 10px;padding:10px 12px;border-radius:12px;background:var(--turmeric-soft)}
+.spbox .pchips{margin-top:8px}
 </style>
 </head>
 <body>
@@ -508,21 +511,27 @@ function taCtx(){return S.customer==="TA"||(!S.customer&&S.table==="TA")}
 function parseChoice(c){const mm=String(c).match(/^(.*?)(?:\s*\+\s*(\d+(?:\.\d+)?))?\s*(?:@\s*(.*))?$/)||[];return {label:(mm[1]||"").trim(),add:Number(mm[2]||0),kw:(mm[3]||"").trim()}}
 function optAdd(label){if(!label)return 0;const c=sauceCfg().choices.map(parseChoice).find(x=>x.label===label);return c?c.add:0}
 /* prices always come from the current menu (customer phones can't set prices); variable-price items are priced by staff at billing */
-function linePrice(o,it){const m=menuById(it.mid);if(it.var||isVar(m))return null;const ta=o.table==="TA"||!!it.ta;
+function linePrice(o,it){const m=menuById(it.mid);if(it.var||isVar(m))return it.setPrice!=null&&it.setPrice!==""?Number(it.setPrice)+optAdd(it.opt):null;const ta=o.table==="TA"||!!it.ta;
   const base=m?mPrice(m,ta):(o.source==="customer"?0:Number(it.price)||0);return base+optAdd(it.opt)}
 function cartUnit(l,ta){const m=menuById(l.mid);if(isVar(m))return null;return mPrice(m,ta)+optAdd(l.opt)}
 function priceSteps(lo,hi){const a=[];if(!(lo>=0)||!(hi>=lo))return a;for(let v=lo;v<hi&&a.length<40;v+=5)a.push(v);a.push(hi);return a}
-function padGet(k){if(k.startsWith("vp:")){return (S.form.vp||{})[k.slice(3)]||""}return S.form[k]||""}
-function padSet(k,v){if(k.startsWith("vp:")){S.form.vp=S.form.vp||{};S.form.vp[k.slice(3)]=v}else S.form[k]=v}
+function itemByKey(key){const [oid,idx]=key.split(":");const o=S.orders.find(x=>x.id===oid);return o?{o,idx:+idx,it:(o.items||[])[+idx]}:null}
+function savedPrice(key){const r=itemByKey(key);return r&&r.it&&r.it.setPrice!=null&&r.it.setPrice!==""?String(r.it.setPrice):""}
+function padGet(k){if(k.startsWith("vp:")||k.startsWith("sp:")){const map=k.startsWith("vp:")?S.form.vp:S.form.sp;const key=k.slice(3);if(map&&key in map)return map[key]||"";return savedPrice(key)}return S.form[k]||""}
+function padSet(k,v){if(k.startsWith("vp:")){S.form.vp=S.form.vp||{};S.form.vp[k.slice(3)]=v}else if(k.startsWith("sp:")){S.form.sp=S.form.sp||{};S.form.sp[k.slice(3)]=v}else S.form[k]=v}
+async function saveSetPrice(key,val){const r=itemByKey(key);if(!r||!r.it)return;const items=(r.o.items||[]).map(x=>Object.assign({},x));items[r.idx].setPrice=val===""||val==null?null:Number(val);
+  if(S.form.sp)delete S.form.sp[key];if(S.form.vp)delete S.form.vp[key];r.o.items=items;render();
+  await guard(async()=>{await updateDoc(dref("orders/"+r.o.id),{items});toast(val===""||val==null?"ล้างราคาแล้ว":"บันทึกราคา ฿"+val+" แล้ว")})}
 function padField(k,ph){const v=padGet(k);return '<button class="padfield'+(S.pad===k?" on":"")+(v===""?" ph0":"")+'" data-a="padFocus" data-k="'+esc(k)+'">'+(v===""?ph:"฿"+esc(v))+"</button>"}
 function numpad(k){if(S.pad!==k)return "";return '<div class="numpad" role="group" aria-label="แป้นตัวเลข">'+["1","2","3","4","5","6","7","8","9"].map(n=>'<button data-a="pad" data-v="'+n+'">'+n+"</button>").join("")+
   '<button class="fn" data-a="pad" data-v="clear">ล้าง</button><button data-a="pad" data-v="0">0</button><button class="fn" data-a="pad" data-v="back" aria-label="ลบ">⌫</button><button class="ok" style="grid-column:1 / -1" data-a="pad" data-v="done">เสร็จ</button></div>'}
+function tableHasBill(t){return !!t&&t!=="TA"&&S.orders.some(o=>o.table===t)}
 function cartHasVar(){return S.cart.some(l=>isVar(menuById(l.mid)))}
 function lineName(o,it){if(o.source==="customer"){const m=menuById(it.mid);return m?m.name:String(it.name||"")}return it.name}
 function billLines(t){const map=new Map();const out=[];
   ordersFor(t).forEach(o=>(o.items||[]).forEach((it,idx)=>{const q=Math.max(0,Math.min(99,parseInt(it.qty)||0));if(!q)return;
     const ta=o.table==="TA"||!!it.ta;const name=lineName(o,it);const opt=it.opt||"";const m=menuById(it.mid);
-    if(it.var||isVar(m)){const key=o.id+":"+idx;const raw=S.form.vp?S.form.vp[key]:null;const p=raw===""||raw==null?null:Number(raw);
+    if(it.var||isVar(m)){const key=o.id+":"+idx;const raw=S.form.vp&&key in S.form.vp?S.form.vp[key]:(it.setPrice!=null&&it.setPrice!==""?String(it.setPrice):null);const p=raw===""||raw==null?null:Number(raw);
       const lo=m?Number(ta&&m.pMinTA!=null?m.pMinTA:m.pMin):null,hi=m?Number(ta&&m.pMaxTA!=null?m.pMaxTA:m.pMax):null;
       out.push({name,opt,qty:q,ta,price:p!=null&&p>=0?p+optAdd(opt):null,base:p,vkey:key,range:m?rangeTxt(m,ta):"",lo,hi});return}
     const price=linePrice(o,it);const k=it.mid+"|"+price+"|"+opt+"|"+(ta?1:0);const cur=map.get(k);if(cur)cur.qty+=q;else map.set(k,{name,price,qty:q,opt,ta})}));
@@ -648,10 +657,13 @@ function sentList(t,staff){
    items.map((i,idx)=>{const m=menuById(i.mid);const q=parseInt(i.qty)||0;const k=o.id+":"+idx;
      const txt=q+"× "+esc(isEN()?trName(m,lineName(o,i)):lineName(o,i))+(i.opt?' <span style="color:var(--basil);font-weight:600">• '+esc(trOpt(i.opt))+"</span>":"")+(i.note?' <span class="muted small">('+esc(i.note)+")</span>":"")+(i.ta&&o.table!=="TA"?' <span class="tatag">🛍️ '+L("กลับบ้าน","Takeaway")+"</span>":"")+(o.status!=="served"&&servedMap(o)[idx]?' <span class="sdone">✓ '+L("เสิร์ฟแล้ว","Served")+"</span>":"")+'<span class="iprice2">'+(linePrice(o,i)==null?rangeTxt(m,o.table==="TA"||!!i.ta):baht(linePrice(o,i)*q))+"</span>";
      if(!staff)return '<div class="irow"><span class="itext">'+txt+"</span></div>";
+     const isV=!!(i.var||isVar(m));const ta=o.table==="TA"||!!i.ta;
+     const spBox=isV&&m?'<div class="spbox"><div class="row between wrapflex"><span class="muted small">ใส่ราคาต่อจาน'+(ta?" (ราคากลับบ้าน)":"")+" ช่วง "+rangeTxt(m,ta)+(i.setPrice!=null&&i.setPrice!==""?' <b style="color:var(--basil)">✓ ลูกค้าเห็นราคาแล้ว</b>':"")+"</span>"+padField("sp:"+k,"พิมพ์ราคา")+'</div><div class="pchips">'+
+       (()=>{const lo=Number(ta&&m.pMinTA!=null?m.pMinTA:m.pMin),hi=Number(ta&&m.pMaxTA!=null?m.pMaxTA:m.pMax);return priceSteps(lo,hi).map(v=>'<button class="chip" data-a="spPick" data-k="'+esc(k)+'" data-v="'+v+'" aria-pressed="'+(i.setPrice!=null&&Number(i.setPrice)===v)+'">฿'+v+"</button>").join("")})()+"</div>"+numpad("sp:"+k)+"</div>":"";
      const acts=(o.table!=="TA"?'<button class="btn ghost" data-a="itemTA" data-id="'+o.id+'" data-i="'+idx+'">'+(i.ta?"🍽️ ทานที่ร้าน":"🛍️ กลับบ้าน")+"</button>":"")+(m&&optGroupFor(m)?'<button class="btn ghost" data-a="itemSauce" data-id="'+o.id+'" data-i="'+idx+'">เปลี่ยนซอส</button>':"")+
        (q>1?'<button class="btn ghost" data-a="itemMinus" data-id="'+o.id+'" data-i="'+idx+'">−1</button>':"")+
        (S.arm==="idel:"+k?'<button class="btn warn" data-a="itemDel" data-id="'+o.id+'" data-i="'+idx+'">ยืนยันยกเลิก</button>':'<button class="btn ghost" data-a="arm" data-k="idel:'+k+'">ยกเลิก</button>');
-     return '<div class="irow"><span class="itext">'+txt+'</span><span class="iacts">'+acts+"</span></div>"}).join("")+
+     return '<div class="irow"><span class="itext">'+txt+'</span><span class="iacts">'+acts+"</span></div>"+spBox}).join("")+
    (staff&&items.length>1?'<div class="row" style="justify-content:flex-end;margin-top:8px">'+(S.arm==="void:"+o.id?'<button class="btn warn small" data-a="void" data-id="'+o.id+'">ยืนยันยกเลิกทั้งออเดอร์</button>':'<button class="btn ghost small" data-a="arm" data-k="void:'+o.id+'">ยกเลิกทั้งออเดอร์</button>')+"</div>":"")+"</div>"}).join("")+"</div>"}
 
 function viewTAList(){
@@ -786,8 +798,9 @@ function sheetHtml(){
     body=S.cart.map(l=>{const m=menuById(l.mid);const u=cartUnit(l,cta);return '<div class="rvrow"><span><b>'+l.qty+"×</b> "+esc(trName(m,l.name))+(l.opt?'<br><span style="color:var(--basil);font-weight:600;font-size:15px">• '+esc(trOpt(l.opt))+"</span>":"")+(l.note?'<br><span class="muted small">'+esc(l.note)+"</span>":"")+"</span><span>"+(u==null?'<span class="muted small">'+rangeTxt(m,cta)+"</span>":baht(u*l.qty))+"</span></div>"}).join("")+
       '<div class="row between" style="margin:10px 0 4px"><span style="font-weight:600">'+L("รวม","Total")+(cta?L(" (ราคากลับบ้าน)"," (takeaway prices)"):"")+'</span><span class="grand">'+baht(cartTotal(cta))+"</span></div>"+(cartHasVar()?'<p class="vnote">'+L("มีรายการราคาตามน้ำหนัก ร้านจะแจ้งราคาจริงตอนคิดเงิน","Some items are priced by weight. We'll confirm the price at checkout.")+"</p>":"");
     if(isTAlink)body+='<p class="muted" style="margin:8px 0 0">'+L("สั่งกลับบ้านในชื่อ ","Takeaway order for ")+"<b>"+esc(S.taCust?S.taCust.name:"")+"</b> "+esc(S.taCust?S.taCust.phone:"")+"</p>";
-    else{body+='<div class="dinechoice" role="radiogroup" aria-label="'+L("รูปแบบการสั่ง","Order type")+'"><button class="dinebtn" role="radio" data-a="dine" data-v="in" aria-pressed="'+(S.dine==="in")+'" aria-checked="'+(S.dine==="in")+'"><span class="ic">🍽️</span>'+L("ทานที่ร้าน","Dine in")+'<span class="fromt">'+tLabel(S.customer)+'</span></button><button class="dinebtn" role="radio" data-a="dine" data-v="ta" aria-pressed="'+(S.dine==="ta")+'" aria-checked="'+(S.dine==="ta")+'"><span class="ic">🛍️</span>'+L("สั่งกลับบ้าน","Takeaway")+'<span class="fromt">'+L("แยกบิล","Separate bill")+"</span></button></div>";
-      if(S.dine==="ta"){const f=S.form;body+='<div class="field"><label for="cName">'+L("ชื่อ","Name")+'</label><input id="cName" data-f="cName" autocomplete="name" value="'+esc(f.cName!=null?f.cName:(S.taCust?S.taCust.name:""))+'"></div><div class="field"><label for="cPhone">'+L("เบอร์โทร","Phone number")+'</label><input id="cPhone" data-f="cPhone" type="tel" inputmode="tel" autocomplete="tel" value="'+esc(f.cPhone!=null?f.cPhone:(S.taCust?S.taCust.phone:""))+'"></div>'}}
+    else{body+='<div class="dinechoice" role="radiogroup" aria-label="'+L("รูปแบบการสั่ง","Order type")+'"><button class="dinebtn" role="radio" data-a="dine" data-v="in" aria-pressed="'+(S.dine==="in")+'" aria-checked="'+(S.dine==="in")+'"><span class="ic">🍽️</span>'+L("ทานที่ร้าน","Dine in")+'<span class="fromt">'+tLabel(S.customer)+'</span></button><button class="dinebtn" role="radio" data-a="dine" data-v="ta" aria-pressed="'+(S.dine==="ta")+'" aria-checked="'+(S.dine==="ta")+'"><span class="ic">🛍️</span>'+L("สั่งกลับบ้าน","Takeaway")+'<span class="fromt">'+(tableHasBill(S.customer)?L("รวมบิล","Same bill as ")+(isEN()?tLabel(S.customer):tLabel(S.customer)):L("แยกบิล","Separate bill"))+"</span></button></div>";
+      if(S.dine==="ta"&&tableHasBill(S.customer))body+='<p class="vnote" style="color:var(--accent);background:var(--accent-soft)">'+L("รายการกลับบ้านจะรวมอยู่ในบิลของ"+tLabel(S.customer)+" ใช้ราคากลับบ้าน และจ่ายพร้อมกันได้เลย","Takeaway items will be added to the "+tLabel(S.customer)+" bill at takeaway prices, so you can pay once.")+"</p>";
+      else if(S.dine==="ta"){const f=S.form;body+='<div class="field"><label for="cName">'+L("ชื่อ","Name")+'</label><input id="cName" data-f="cName" autocomplete="name" value="'+esc(f.cName!=null?f.cName:(S.taCust?S.taCust.name:""))+'"></div><div class="field"><label for="cPhone">'+L("เบอร์โทร","Phone number")+'</label><input id="cPhone" data-f="cPhone" type="tel" inputmode="tel" autocomplete="tel" value="'+esc(f.cPhone!=null?f.cPhone:(S.taCust?S.taCust.phone:""))+'"></div>'}}
     foot=(custLeft()!==Infinity?'<div style="text-align:center;margin-bottom:8px"><span class="ctimer'+(custLeft()<60000?" low":"")+'">⏱ '+L("เหลือเวลาสั่ง","Time left to order")+' <span id="ctime2">'+mmss(custLeft())+"</span></span></div>":"")+
       '<div class="row"><button class="btn ghost" style="flex:1" data-a="backCart">'+L("แก้ไข","Edit")+'</button><button class="btn" style="flex:2" data-a="send"'+((isTAlink||S.dine)&&!S.busy?"":" disabled")+">"+(isTAlink||S.dine?L("ยืนยันส่งออเดอร์","Send order"):L("เลือกด้านบนก่อน","Choose an option above"))+"</button></div>"}
   else if(S.sheet==="opt"){const m=menuById(S.optFor);const g=optGroupFor(m);if(!m||!g){S.sheet=null;return ""}
@@ -909,29 +922,36 @@ document.addEventListener("click",async e=>{
   case "send":{if(custExpired()){S.sheet=null;S.cart=[];toast(L("หมดเวลาสั่งอาหาร กรุณาสแกน QR อีกครั้ง","Ordering time is up. Please scan the QR code again."));render();return}
     let t=S.customer||S.table;let who=null,fromTable="";
     if(S.customer==="TA")who=S.taCust;
-    else if(S.customer){if(S.dine==="ta"){const name=String(S.form.cName!=null?S.form.cName:(S.taCust?S.taCust.name:"")).trim().slice(0,60);const phone=String(S.form.cPhone!=null?S.form.cPhone:(S.taCust?S.taCust.phone:"")).replace(/[^\d+]/g,"").slice(0,15);
+    let mergeTA=false;
+    if(S.customer&&S.customer!=="TA"&&S.dine==="ta"&&tableHasBill(S.customer))mergeTA=true;
+    else if(S.customer&&S.customer!=="TA"){if(S.dine==="ta"){const name=String(S.form.cName!=null?S.form.cName:(S.taCust?S.taCust.name:"")).trim().slice(0,60);const phone=String(S.form.cPhone!=null?S.form.cPhone:(S.taCust?S.taCust.phone:"")).replace(/[^\d+]/g,"").slice(0,15);
         if(!name){toast(L("กรุณาใส่ชื่อ","Please enter your name"));return}if(phone.replace(/\D/g,"").length<9){toast(L("กรุณาใส่เบอร์โทรให้ครบ","Please enter a full phone number"));return}
         who={name,phone};fromTable=S.customer;t="TA";S.taCust=who;ssSet("taCust",who)}
       else if(S.dine!=="in"){toast(L("กรุณาเลือก ทานที่ร้าน หรือ สั่งกลับบ้าน","Please choose dine in or takeaway"));return}}
     else if(t==="TA")who=S.ta;
     if(t==="TA"&&!who){toast("กรุณาใส่ชื่อและเบอร์โทรก่อน");return}
-    const items=S.cart.map(l=>{const m=menuById(l.mid);const u=cartUnit(l,t==="TA");return {mid:l.mid,name:l.name,price:u==null?0:u,qty:l.qty,note:(l.note||"").trim().slice(0,80),opt:l.opt||"",var:isVar(m)}});
+    const items=S.cart.map(l=>{const m=menuById(l.mid);const u=cartUnit(l,t==="TA"||mergeTA);const it={mid:l.mid,name:l.name,price:u==null?0:u,qty:l.qty,note:(l.note||"").trim().slice(0,80),opt:l.opt||"",var:isVar(m)};if(mergeTA)it.ta=true;return it});
     S.busy=true;render();
     await guard(async()=>{const ref=doc(col("orders"));const b=writeBatch(fs);b.set(ref,{table:t,items,status:"new",createdAt:Date.now(),source:S.customer?"customer":"staff"});
       if(who){const c={name:String(who.name).slice(0,60),phone:String(who.phone).slice(0,20),createdAt:Date.now()};if(fromTable)c.fromTable=fromTable;b.set(dref("contacts/"+ref.id),c)}
       await b.commit();if(S.customer&&t==="TA"){S.myTA=(S.myTA||[]).concat([ref.id]);ssSet("myTA",S.myTA)}
       S.cart=[];S.sheet=null;S.dine=null;
-      toast(S.customer?(fromTable?L("ส่งออเดอร์กลับบ้านแล้ว ในชื่อ "+who.name+" ชำระเงินที่เคาน์เตอร์","Takeaway order sent for "+who.name+". Please pay at the counter."):L("ส่งออเดอร์แล้ว รออาหารสักครู่","Order sent! Your food is on its way.")):"ส่งเข้าครัวแล้ว")},S.customer?L("ส่งออเดอร์ไม่สำเร็จ กรุณาเรียกพนักงาน","Couldn't send your order. Please ask our staff."):null);
+      toast(S.customer?(mergeTA?L("ส่งออเดอร์กลับบ้านแล้ว รวมในบิล"+tLabel(S.customer),"Takeaway order sent and added to the "+tLabel(S.customer)+" bill."):fromTable?L("ส่งออเดอร์กลับบ้านแล้ว ในชื่อ "+who.name+" ชำระเงินที่เคาน์เตอร์","Takeaway order sent for "+who.name+". Please pay at the counter."):L("ส่งออเดอร์แล้ว รออาหารสักครู่","Order sent! Your food is on its way.")):"ส่งเข้าครัวแล้ว")},S.customer?L("ส่งออเดอร์ไม่สำเร็จ กรุณาเรียกพนักงาน","Couldn't send your order. Please ask our staff."):null);
     S.busy=false;render();break}
   case "status":el.disabled=true;await guard(()=>updateDoc(dref("orders/"+el.dataset.id),{status:el.dataset.st}));break;
   case "arm":S.arm=el.dataset.k;render();break;
   case "void":{S.arm=null;const vo=S.orders.find(x=>x.id===el.dataset.id);await guard(async()=>{const b=writeBatch(fs);b.delete(dref("orders/"+el.dataset.id));if(vo&&vo.table==="TA")b.delete(dref("contacts/"+el.dataset.id));await b.commit()});}toast("ยกเลิกรายการแล้ว");break;
   case "method":S.method=el.dataset.m;S.pad=null;render();break;
   case "recv":S.form.received=el.dataset.v;S.pad=null;render();break;
-  case "padFocus":S.pad=S.pad===el.dataset.k?null:el.dataset.k;render();break;
+  case "padFocus":{const prev=S.pad;S.pad=S.pad===el.dataset.k?null:el.dataset.k;
+    if(prev&&prev.startsWith("sp:")&&prev!==S.pad){const key=prev.slice(3);if(S.form.sp&&key in S.form.sp){await saveSetPrice(key,S.form.sp[key]);break}}
+    render();break}
   case "pad":{const k=S.pad;if(!k)return;let v=String(padGet(k));const d=el.dataset.v;
     if(d==="done"){S.pad=null}else if(d==="clear")v="";else if(d==="back")v=v.slice(0,-1);else if(v.length<7)v=(v==="0"?"":v)+d;
-    if(d!=="done")padSet(k,v);render();break}
+    if(d!=="done")padSet(k,v);
+    if(d==="done"&&k.startsWith("sp:")){const key=k.slice(3);if(S.form.sp&&key in S.form.sp){await saveSetPrice(key,S.form.sp[key]);break}}
+    render();break}
+  case "spPick":{const k=el.dataset.k;const cur=savedPrice(k);if(S.pad==="sp:"+k)S.pad=null;await saveSetPrice(k,cur===el.dataset.v?"":el.dataset.v);break}
   case "vpPick":{S.form.vp=S.form.vp||{};const k=el.dataset.k;S.form.vp[k]=S.form.vp[k]===el.dataset.v?"":el.dataset.v;if(S.pad==="vp:"+k)S.pad=null;render();break}
   case "pay":{const t=S.table;const tickets=ordersFor(t).map(o=>o.id);const lines0=billLines(t);if(lines0.some(l=>l.price==null)){toast("ใส่ราคาให้ครบก่อน");return}
     const lines=lines0.map(l=>({name:l.name,opt:l.opt||"",qty:l.qty,price:l.price,ta:!!l.ta}));const c=calc(lines,S.form.discount);
